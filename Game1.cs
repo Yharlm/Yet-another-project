@@ -15,10 +15,8 @@ public class Game1 : Game
 
     public List<Block> Block_list = new List<Block>();
     public int[,] grid = new int[500, 1000];
-
-    public Vector2 camera = new Vector2(0, 0);
-
-
+    public Player player = new Player();
+    public Vector2 mousepos;
 
 
 
@@ -38,8 +36,9 @@ public class Game1 : Game
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
     }
-    static void Generate_terrain(int[,] grid,List<Block> list)
+    static void Generate_terrain(int[,] grid, List<Block> list)
     {
+        
         Random random = new Random();
         int Width = 1000;
         ; int Height = 45
@@ -79,17 +78,17 @@ public class Game1 : Game
         }
 
 
-        //for (int j = 0; j < Width - 12;)
-        //{
-        //    int coalN = random.Next(1, 40);
-        //    int vein = random.Next(1, 6);
+        for (int j = 0; j < Width - 12;)
+        {
+            int coalN = random.Next(1, 40);
+            int vein = random.Next(1, 6);
 
-        //    if (random.Next(1, 30) < 4)
-        //    {
-        //        Minecraft.Fill_Index_Cord2(j, Height + coalN - vein, j + vein, Height + coalN, grid, Minecraft.GetBlock("Coal_ore", list), 5);
-        //    }
-        //    j++;
-        //}
+            if (random.Next(1, 30) < 4)
+            {
+                Minecraft.Fill_Index_Cord2(j, Height + coalN - vein, j + vein, Height + coalN, grid, Minecraft.GetBlock("Coal_ore", list), 5);
+            }
+            j++;
+        }
         //for (int j = 0; j < Width - 12;)
         //{
         //    int ironN = random.Next(1, 40);
@@ -161,6 +160,12 @@ public class Game1 : Game
         Template.name = "Stone";
         Template.Texture = Content.Load<Texture2D>("stone");
         Blocks.Add(Template);
+
+        Template = new Block();
+        Template.id = 4;
+        Template.name = "Coal_ore";
+        Template.Texture = Content.Load<Texture2D>("ladder");
+        Blocks.Add(Template);
     }
     protected override void Initialize()
     {
@@ -187,64 +192,82 @@ public class Game1 : Game
     {
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
-
+        mousepos = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
         // TODO: Add your update logic here
         //if (Keyboard.GetState().IsKeyDown(Keys.S))
         //{
         //    camera.Y += 10f;
         //}
-        camera = Read_input(camera);
+        Read_input(player);
         base.Update(gameTime);
     }
 
-    static Vector2 Read_input(Vector2 cam)
+    static void Read_input(Player plr)
     {
-        float speed = -5f;
+        float speed = 0.1f;
+        if(Keyboard.GetState().IsKeyDown(Keys.OemMinus))
+        {
+            plr.Zoom += 0.01f;
+        }
+        if (Keyboard.GetState().IsKeyDown(Keys.OemPlus))
+        {
+            plr.Zoom -= 0.01f;
+        }
         if (Keyboard.GetState().IsKeyDown(Keys.W))
         {
-            cam.Y -= speed;
+            plr.camera.Y += speed * 81;
         }
         if (Keyboard.GetState().IsKeyDown(Keys.S))
         {
-            cam.Y += speed;
+            plr.camera.Y -= speed * 81;
         }
         if (Keyboard.GetState().IsKeyDown(Keys.A))
         {
-            cam.X -= speed;
+            plr.camera.X -= speed;
         }
         if (Keyboard.GetState().IsKeyDown(Keys.D))
         {
-            cam.X += speed;
+            plr.camera.X += speed;
         }
-        return cam;
+        if(Mouse.GetState().LeftButton == ButtonState.Pressed)
+        {
+            
+        }
+        
     }
     protected override void Draw(GameTime gameTime)
     {
-        float relative_block_size = 1.6f;
+        float relative_block_size = player.Zoom;
         float block_gap = 58f * relative_block_size / 3.65f;
-        int _camx = (int)Math.Floor(camera.X );
-        int _camy = (int)Math.Floor(camera.Y );
+       
 
         GraphicsDevice.Clear(Color.CornflowerBlue);
-        for (int i = _camy; i < 10+ _camy; i++)
+        for (int i = 0; i < 100; i++)
         {
-            for (int j = _camx; j < 10+ _camx; j++)
+            for (int j = (int)(player.camera.X * relative_block_size)+2; j < (int)(player.camera.X * relative_block_size) + 27; j++)
             {
+                if(j <= 0)
+                {
+                    j = 5;
+                }
                 if (Block_list.Find(x => x.id == grid[i, j]) == null)
                 {
                     _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
-                    _spriteBatch.Draw(Block_list[1].Texture, new Vector2(j * block_gap + camera.X, i * block_gap + camera.Y), null, Color.White, 0f, Vector2.Zero, relative_block_size, SpriteEffects.None, 0f);
+                    _spriteBatch.Draw(Block_list[1].Texture, new Vector2(j * block_gap + -player.camera.X, i * block_gap + -player.camera.Y), null, Color.White, 0f, Vector2.Zero, relative_block_size, SpriteEffects.None, 0f);
                     _spriteBatch.End();
                     continue;
                 }
+
                 _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
-                _spriteBatch.Draw(Block_list.Find(x => x.id == grid[i, j]).Texture, new Vector2(j * block_gap + camera.X, i * block_gap + camera.Y), null, Color.White, 0f, Vector2.Zero, relative_block_size, SpriteEffects.None, 0f);
+                _spriteBatch.Draw(Block_list.Find(x => x.id == grid[i, j]).Texture, new Vector2(j * block_gap + -player.camera.X * block_gap * relative_block_size, i * block_gap + player.camera.Y), null, Color.White, 0f, Vector2.Zero, relative_block_size, SpriteEffects.None, 0f);
                 _spriteBatch.End();
-
-
-
             }
         }
+
+        _spriteBatch.Begin();
+        _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), "X: " + player.camera.X + " Y: " + player.camera.Y, new Vector2(0,0), Color.White);
+        _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), "X:"+ mousepos.X + "Y:"+mousepos.Y, new Vector2(0, 20), Color.White);
+        _spriteBatch.End();
 
         base.Draw(gameTime);
     }

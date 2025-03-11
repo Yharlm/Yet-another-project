@@ -121,6 +121,13 @@
 /processorParam:TextureFormat=Color
 /build:stone.png
 
+#begin text1.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:text1.spritefont
+
 #begin torch.png
 /importer:TextureImporter
 /processor:TextureProcessor
