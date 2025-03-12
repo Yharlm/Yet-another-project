@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Graphics.PackedVector;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
@@ -12,9 +13,11 @@ public class Game1 : Game
     private SpriteBatch _spriteBatch;
 
     // game's variables go here i guess, since this is a class
+    static Minecraft minecraft = new Minecraft();
 
-    public List<Block> Block_list = new List<Block>();
+    public List<Block> Block_list = minecraft.Block_list;
     public int[,] grid = new int[500, 1000];
+    public int[,] Background_grid = new int[500, 1000];
     public Player player = new Player();
     public Vector2 mousepos;
 
@@ -35,10 +38,20 @@ public class Game1 : Game
         _graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
-    }
-    static void Generate_terrain(int[,] grid, List<Block> list)
+        Minecraft minecraft = new Minecraft();
+
+}
+
+static void Generate_terrain(int[,] grid,int[,] backrond, List<Block> list)
     {
-        
+        for (int i = 0; i < 500; i++)
+        {
+            for (int j = 0; j < 1000; j++)
+            {
+                
+                backrond[i, j] = Minecraft.GetBlock("Stone",list).id;
+            }
+        }
         Random random = new Random();
         int Width = 1000;
         ; int Height = 45
@@ -50,7 +63,6 @@ public class Game1 : Game
         int max = 3;
         int c = 0;
         int sea_level = 70;
-
 
         for (int j = 2; j < Width; j++)
         {
@@ -111,25 +123,26 @@ public class Game1 : Game
         //    }
         //}
 
-        //for (int j = 12; j < Width - 12; j++)
-        //{
+        for (int j = 12; j < Width - 12; j++)
+        {
 
-        //    int count = random.Next(0, 11);
-        //    while (count > 0)
-        //    {
-        //        int y = random.Next(30, 460);
-        //        if (grid[y, j] != 0)
-        //        {
+            int count = random.Next(0, 11);
+            while (count > 0)
+            {
+                int y = random.Next(30, 460);
+                if (grid[y, j] != 0)
+                {
 
-        //            Minecraft.Caves(j, y, grid, Minecraft.GetBlock("Dirt", list), false);
-        //            Minecraft.Caves(j, y, grid, Minecraft.GetBlock("Iron_ore", list), false);
-        //            Minecraft.Caves(j, y, grid);
-        //        }
-        //        count--;
-        //    }
+                    Minecraft.Caves(j, y, grid, Minecraft.GetBlock("Dirt", list), false);
+                    //Minecraft.Caves(j, y, grid, Minecraft.GetBlock("Iron_ore", list), false);
+                    
+
+                }
+                count--;
+            }
 
 
-        //}
+        }
 
 
     }
@@ -166,6 +179,14 @@ public class Game1 : Game
         Template.name = "Coal_ore";
         Template.Texture = Content.Load<Texture2D>("ladder");
         Blocks.Add(Template);
+
+        //Template = new Block();
+        //Template.id = 5;
+        //Template.name = "Iron_ore";
+        //Template.Texture = Content.Load<Texture2D>("iron_ore");
+        //Blocks.Add(Template);
+
+        
     }
     protected override void Initialize()
     {
@@ -177,7 +198,7 @@ public class Game1 : Game
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         Create_Blocks(Block_list);
-        Generate_terrain(grid, Block_list);
+        Generate_terrain(grid,Background_grid, Block_list);
         //for (int i = 0; i < 500; i++)
         //{
         //    for (int j = 0; j < 1000; j++)
@@ -198,11 +219,11 @@ public class Game1 : Game
         //{
         //    camera.Y += 10f;
         //}
-        Read_input(player);
+        Read_input(player,grid);
         base.Update(gameTime);
     }
 
-    static void Read_input(Player plr)
+    static void Read_input(Player plr, int[,] grid)
     {
         float speed = 0.1f;
         if(Keyboard.GetState().IsKeyDown(Keys.OemMinus))
@@ -231,7 +252,13 @@ public class Game1 : Game
         }
         if(Mouse.GetState().LeftButton == ButtonState.Pressed)
         {
-            
+            Vector2 mousepos = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
+            int x = (int)(mousepos.X + plr.camera.X);
+            int y = (int)(mousepos.Y + plr.camera.Y);
+            if (x < 1000 && y < 500)
+            {
+                Minecraft.Fill_block(x, y, grid, minecraft.Block_list[0]);
+            }
         }
         
     }
@@ -239,7 +266,7 @@ public class Game1 : Game
     {
         float relative_block_size = player.Zoom;
         float block_gap = 58f * relative_block_size / 3.65f;
-       
+        Color Backround = Color.FromNonPremultiplied(170, 170, 170, 255);
 
         GraphicsDevice.Clear(Color.CornflowerBlue);
         for (int i = 0; i < 100; i++)
@@ -250,6 +277,13 @@ public class Game1 : Game
                 {
                     j = 5;
                 }
+                if (Minecraft.Get_ByID(Background_grid[i, j], Block_list) != null)
+                {
+                    _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
+                    _spriteBatch.Draw(Block_list.Find(x => x.id == Background_grid[i, j]).Texture, new Vector2(j * block_gap + -player.camera.X * block_gap * relative_block_size, i * block_gap + player.camera.Y), null, Backround, 0f, Vector2.Zero, relative_block_size, SpriteEffects.None, 0f);
+                    _spriteBatch.End();
+                    
+                }
                 if (Block_list.Find(x => x.id == grid[i, j]) == null)
                 {
                     _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
@@ -257,17 +291,22 @@ public class Game1 : Game
                     _spriteBatch.End();
                     continue;
                 }
-
+                
+                
                 _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
                 _spriteBatch.Draw(Block_list.Find(x => x.id == grid[i, j]).Texture, new Vector2(j * block_gap + -player.camera.X * block_gap * relative_block_size, i * block_gap + player.camera.Y), null, Color.White, 0f, Vector2.Zero, relative_block_size, SpriteEffects.None, 0f);
                 _spriteBatch.End();
             }
         }
-
+        Vector2 mousepos = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
+        int x = (int)(mousepos.X + player.camera.X)%58;
+        int y = -(int)(mousepos.Y + player.camera.Y) % 58;
         _spriteBatch.Begin();
         _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), "X: " + player.camera.X + " Y: " + player.camera.Y, new Vector2(0,0), Color.White);
-        _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), "X:"+ mousepos.X + "Y:"+mousepos.Y, new Vector2(0, 20), Color.White);
+        _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), "X:"+x + "Y:"+y, new Vector2(0, 20), Backround);
         _spriteBatch.End();
+
+
 
         base.Draw(gameTime);
     }

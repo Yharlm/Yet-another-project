@@ -10,6 +10,7 @@ namespace Project3
 {
     class Minecraft
     {
+        public List<Block> Block_list = new List<Block>();
         public static void Fill_block(int x, int y, int[,] grid, Block Block)
         {
 
@@ -72,6 +73,7 @@ namespace Project3
             }
 
         }
+        
 
         public static void Fill_Index_Cord2(int x1, int y1, int x2, int y2, int[,] grid, Block Block, int randomiser)
         {

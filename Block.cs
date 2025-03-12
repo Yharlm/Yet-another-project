@@ -13,6 +13,7 @@ namespace Project3
         public Texture2D Texture;
         public string name = string.Empty;
         public bool is_collidable = true;
+        public bool is_backround = false;
         public int stength = 1;
 
     }
