@@ -9,7 +9,7 @@ namespace Project3
 {
     public class Player
     {
-        public Vector2 camera = new Vector2(0, -1255);
+        public Vector2 camera = new Vector2(0, 0);
         public float Zoom = 1.0f;
 
     }
