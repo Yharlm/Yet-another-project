@@ -11,6 +11,7 @@ namespace Project3
     {
         public Vector2 camera = new Vector2(0, 0);
         public float Zoom = 1.0f;
+        public int id_copy = 0;
 
     }
 }

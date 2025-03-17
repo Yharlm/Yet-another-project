@@ -39,7 +39,7 @@ namespace Project3
                         }
                         continue;
                     }
-                    grid[j + y, i + x] = 17;
+                    grid[j + y, i + x] = 0;
                 }
             }
         }

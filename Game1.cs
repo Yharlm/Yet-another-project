@@ -38,18 +38,19 @@ public class Game1 : Game
         _graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
-        Minecraft minecraft = new Minecraft();
+        
 
-}
 
-static void Generate_terrain(int[,] grid,int[,] backrond, List<Block> list)
+    }
+
+    static void Generate_terrain(int[,] grid, int[,] backrond, List<Block> list)
     {
         for (int i = 0; i < 500; i++)
         {
             for (int j = 0; j < 1000; j++)
             {
-                
-                backrond[i, j] = Minecraft.GetBlock("Stone",list).id;
+
+                backrond[i, j] = Minecraft.GetBlock("Stone", list).id;
             }
         }
         Random random = new Random();
@@ -101,27 +102,7 @@ static void Generate_terrain(int[,] grid,int[,] backrond, List<Block> list)
             }
             j++;
         }
-        //for (int j = 0; j < Width - 12;)
-        //{
-        //    int ironN = random.Next(1, 40);
-        //    int vein = random.Next(1, 6);
-        //    if (random.Next(1, 30) < 4)
-        //    {
-        //        Minecraft.Fill_Index_Cord2(j, Height + ironN - vein, j + vein, Height + ironN, grid, Minecraft.GetBlock("Iron_ore", list), 5);
-        //    }
-        //    j++;
-        //}
-
-        //for (int j = 0; j < Width - 30; j++)
-        //{
-        //    for (int i = sea_level - 10; i < sea_level + 50; i++)
-        //    {
-        //        if (grid[i, j] == 0)
-        //        {
-        //            Minecraft.Fill_block(j, i, grid, Minecraft.GetBlock("water", list));
-        //        }
-        //    }
-        //}
+        
 
         for (int j = 12; j < Width - 12; j++)
         {
@@ -135,7 +116,8 @@ static void Generate_terrain(int[,] grid,int[,] backrond, List<Block> list)
 
                     Minecraft.Caves(j, y, grid, Minecraft.GetBlock("Dirt", list), false);
                     //Minecraft.Caves(j, y, grid, Minecraft.GetBlock("Iron_ore", list), false);
-                    
+                    Minecraft.Caves(j, y, grid);
+
 
                 }
                 count--;
@@ -177,7 +159,7 @@ static void Generate_terrain(int[,] grid,int[,] backrond, List<Block> list)
         Template = new Block();
         Template.id = 4;
         Template.name = "Coal_ore";
-        Template.Texture = Content.Load<Texture2D>("ladder");
+        Template.Texture = Content.Load<Texture2D>("coal_ore");
         Blocks.Add(Template);
 
         //Template = new Block();
@@ -186,19 +168,20 @@ static void Generate_terrain(int[,] grid,int[,] backrond, List<Block> list)
         //Template.Texture = Content.Load<Texture2D>("iron_ore");
         //Blocks.Add(Template);
 
-        
+
     }
     protected override void Initialize()
     {
         // TODO: Add your initialization logic here
         base.Initialize();
+        Minecraft minecraft = new Minecraft();
     }
 
     protected override void LoadContent()
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         Create_Blocks(Block_list);
-        Generate_terrain(grid,Background_grid, Block_list);
+        Generate_terrain(grid, Background_grid, Block_list);
         //for (int i = 0; i < 500; i++)
         //{
         //    for (int j = 0; j < 1000; j++)
@@ -219,7 +202,7 @@ static void Generate_terrain(int[,] grid,int[,] backrond, List<Block> list)
         //{
         //    camera.Y += 10f;
         //}
-        Read_input(player,grid);
+        Read_input(player, grid);
         base.Update(gameTime);
     }
 
@@ -228,7 +211,7 @@ static void Generate_terrain(int[,] grid,int[,] backrond, List<Block> list)
         float relative_block_size = plr.Zoom;
         float block_gap = 58f * relative_block_size / 3.65f;
         float speed = 0.1f;
-        if(Keyboard.GetState().IsKeyDown(Keys.OemMinus))
+        if (Keyboard.GetState().IsKeyDown(Keys.OemMinus))
         {
             plr.Zoom += 0.01f;
         }
@@ -238,11 +221,11 @@ static void Generate_terrain(int[,] grid,int[,] backrond, List<Block> list)
         }
         if (Keyboard.GetState().IsKeyDown(Keys.W))
         {
-            plr.camera.Y += speed;
+            plr.camera.Y -= speed;
         }
         if (Keyboard.GetState().IsKeyDown(Keys.S))
         {
-            plr.camera.Y -= speed;
+            plr.camera.Y += speed;
         }
         if (Keyboard.GetState().IsKeyDown(Keys.A))
         {
@@ -252,29 +235,48 @@ static void Generate_terrain(int[,] grid,int[,] backrond, List<Block> list)
         {
             plr.camera.X += speed;
         }
-        if(Mouse.GetState().LeftButton == ButtonState.Pressed)
+        if (Mouse.GetState().LeftButton == ButtonState.Pressed)
         {
-            
-            Vector2 mousepos = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
-            double x = Math.Ceiling((double)mousepos.X / block_gap + plr.camera.X);
-            double y = Math.Ceiling((double)mousepos.Y / block_gap + plr.camera.Y);
 
-            grid[(int)y-1, (int)x-1] = 1;
+            Vector2 mousepos = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
+            double x = Math.Ceiling((double)mousepos.X / block_gap + plr.camera.X * relative_block_size);
+            double y = Math.Ceiling((double)mousepos.Y / block_gap + plr.camera.Y * relative_block_size);
+
+            grid[(int)y - 1, (int)x - 1] = plr.id_copy;
         }
         
+        if (Mouse.GetState().RightButton == ButtonState.Pressed)
+        {
+
+            Vector2 mousepos = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
+            double x = Math.Ceiling((double)mousepos.X / block_gap + plr.camera.X * relative_block_size);
+            double y = Math.Ceiling((double)mousepos.Y / block_gap + plr.camera.Y * relative_block_size);
+
+            grid[(int)y - 1, (int)x - 1] = 0;
+        }
+        if (Keyboard.GetState().IsKeyDown(Keys.E))
+        {
+
+            Vector2 mousepos = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
+            double x = Math.Ceiling((double)mousepos.X / block_gap + plr.camera.X * relative_block_size);
+            double y = Math.Ceiling((double)mousepos.Y / block_gap + plr.camera.Y * relative_block_size);
+
+            plr.id_copy = grid[(int)y - 1, (int)x - 1];
+        }
+
     }
     protected override void Draw(GameTime gameTime)
     {
         float relative_block_size = player.Zoom;
         float block_gap = 58f * relative_block_size / 3.65f;
         Color Backround = Color.FromNonPremultiplied(170, 170, 170, 255);
-        Vector2 WorldPos = new Vector2(0,0);
+        Vector2 WorldPos = new Vector2(0, 0);
         GraphicsDevice.Clear(Color.CornflowerBlue);
         for (int i = 0; i < 100; i++)
         {
-            for (int j = (int)(player.camera.X * relative_block_size)+2; j < (int)(player.camera.X * relative_block_size) + 27; j++)
+            for (int j = (int)(player.camera.X * relative_block_size) + 2; j < (int)(player.camera.X * relative_block_size) + 27; j++)
             {
-                if(j <= 0)
+                if (j <= 0)
                 {
                     j = 5;
                 }
@@ -283,7 +285,7 @@ static void Generate_terrain(int[,] grid,int[,] backrond, List<Block> list)
                     _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
                     _spriteBatch.Draw(Block_list.Find(x => x.id == Background_grid[i, j]).Texture, new Vector2(j * block_gap + -player.camera.X * block_gap * relative_block_size, i * block_gap + -player.camera.Y * block_gap * relative_block_size), null, Backround, 0f, Vector2.Zero, relative_block_size, SpriteEffects.None, 0f);
                     _spriteBatch.End();
-                    
+
                 }
                 if (Block_list.Find(x => x.id == grid[i, j]) == null)
                 {
@@ -292,20 +294,22 @@ static void Generate_terrain(int[,] grid,int[,] backrond, List<Block> list)
                     _spriteBatch.End();
                     continue;
                 }
-                
-                
+
+
                 _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
                 _spriteBatch.Draw(Block_list.Find(x => x.id == grid[i, j]).Texture, new Vector2(j * block_gap + -player.camera.X * block_gap * relative_block_size, i * block_gap + -player.camera.Y * block_gap * relative_block_size), null, Color.White, 0f, Vector2.Zero, relative_block_size, SpriteEffects.None, 0f);
                 _spriteBatch.End();
             }
         }
-        
+
         Vector2 mousepos = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
-        double x = Math.Ceiling((double)mousepos.X / block_gap * relative_block_size + player.camera.X);
-        double y = Math.Ceiling((double)mousepos.Y / block_gap * relative_block_size + -player.camera.Y); 
+        double x = Math.Ceiling((double)mousepos.X / block_gap + player.camera.X);
+        double y = Math.Ceiling((double)mousepos.Y / block_gap + player.camera.Y);
         _spriteBatch.Begin();
-        _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), "X: " + player.camera.X + " Y: " + player.camera.Y, new Vector2(0,0), Color.White);
-        _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), "X:"+x + "Y:"+y, new Vector2(0, 20), Backround);
+        _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), "X: " + player.camera.X + " Y: " + player.camera.Y, new Vector2(0, 0), Color.White);
+        _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), "X:" + x + "Y:" + y, new Vector2(0, 20), Backround);
+        _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), player.id_copy.ToString(), new Vector2(0, 40), Backround);
+
         _spriteBatch.End();
 
 
