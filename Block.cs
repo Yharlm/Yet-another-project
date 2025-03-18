@@ -15,6 +15,7 @@ namespace Project3
         public bool is_collidable = true;
         public bool is_backround = false;
         public int stength = 1;
+        public bool apaque = false;
 
     }
 }

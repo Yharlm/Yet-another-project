@@ -13,13 +13,48 @@ namespace Project3
         public List<Block> Block_list = new List<Block>();
         public static void Fill_block(int x, int y, int[,] grid, Block Block)
         {
-
             
-            grid[y, x] = Block.id;
+            
+            
             //WriteAt(Block.Texture, x * 2, y);
             
         }
+        public static void Fill_block(int x, int y, int[,] grid, int[,]Background, Block Block)
+        {
 
+            if (x > 0 || y > 0)
+            {
+                grid[y, x] = Block.id;
+                Background[y, x] = Block.id;
+            }
+            
+            //WriteAt(Block.Texture, x * 2, y);
+
+        }
+        public static void Caves(int x, int y, int[,] grid,int[,] background)
+        {
+            Random random = new Random();
+
+            int size = random.Next(2, 5);
+
+
+            for (int i = 0; i < size; i++)
+            {
+                for (int j = 0; j < size; j++)
+                {
+                    if (i == size - 1 && j == size - 1 || i == 0 && j == 0 || i == size - 1 && j == 0 || i == 0 && j == size - 1)
+                    {
+                        if (random.Next(0, 3) == 1 && grid[i + y, j + x] == 3)
+                        {
+                            Caves(x - size / 2 + i, y - size / 2 + j, grid, background);
+                        }
+                        continue;
+                    }
+                    grid[j + y, i + x] = 0;
+                    background[j + y, i + x] = 0;
+                }
+            }
+        }
         public static void Caves(int x, int y, int[,] grid)
         {
             Random random = new Random();

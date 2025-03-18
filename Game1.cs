@@ -45,14 +45,14 @@ public class Game1 : Game
 
     static void Generate_terrain(int[,] grid, int[,] backrond, List<Block> list)
     {
-        for (int i = 0; i < 500; i++)
-        {
-            for (int j = 0; j < 1000; j++)
-            {
+        //for (int i = 0; i < 500; i++)
+        //{
+        //    for (int j = 0; j < 1000; j++)
+        //    {
 
-                backrond[i, j] = Minecraft.GetBlock("Stone", list).id;
-            }
-        }
+        //        backrond[i, j] = Minecraft.GetBlock("Stone", list).id;
+        //    }
+        //}
         Random random = new Random();
         int Width = 1000;
         ; int Height = 45
@@ -73,18 +73,18 @@ public class Game1 : Game
             else if (c == max)
             { Height--; }
 
-            Minecraft.Fill_block(j, Height, grid, Minecraft.GetBlock("Grass_block", list));
+            Minecraft.Fill_block(j, Height, grid,backrond, Minecraft.GetBlock("Grass_block", list));
 
             int count = 1;
             while (count < dirt_Height)
             {
-                Minecraft.Fill_block(j, Height + count, grid, Minecraft.GetBlock("Dirt", list));
+                Minecraft.Fill_block(j, Height + count, grid, backrond, Minecraft.GetBlock("Dirt", list));
                 count++;
             }
 
             while (count < stone_Height)
             {
-                Minecraft.Fill_block(j, Height + count, grid, Minecraft.GetBlock("Stone", list));
+                Minecraft.Fill_block(j, Height + count, grid, backrond, Minecraft.GetBlock("Stone", list));
                 count++;
             }
             //Caves(j, random.Next(sea_level, 100), grid);
@@ -115,7 +115,7 @@ public class Game1 : Game
                 {
 
                     Minecraft.Caves(j, y, grid, Minecraft.GetBlock("Dirt", list), false);
-                    //Minecraft.Caves(j, y, grid, Minecraft.GetBlock("Iron_ore", list), false);
+                    Minecraft.Caves(j, y, grid, Minecraft.GetBlock("Iron_ore", list), false);
                     Minecraft.Caves(j, y, grid);
 
 
@@ -125,7 +125,34 @@ public class Game1 : Game
 
 
         }
+        
+        
+        ConsoleColor Default = ConsoleColor.Cyan;
 
+
+        Structure tree = new Structure();
+        tree.Struct = new int[,]{
+                { 0,6,6,6,0 },
+                { 0,6,7,6,0 },
+                { 6,6,7,6,6 },
+                { 6,6,7,6,6 },
+                { 0,0,7,0,0 },
+                { 0,0,7,0,0 }
+            };
+        int tree_rate = 14;
+        int Tree_r = 0;
+        for (int i = 0; i < 700; i++)
+        {
+            Tree_r = random.Next(1, tree_rate);
+            if (Tree_r >= tree_rate - 2)
+            {
+
+                tree.structure(tree, i, grid, list);
+                i += 5;
+            }
+
+
+        }
 
     }
 
@@ -162,11 +189,27 @@ public class Game1 : Game
         Template.Texture = Content.Load<Texture2D>("coal_ore");
         Blocks.Add(Template);
 
-        //Template = new Block();
-        //Template.id = 5;
-        //Template.name = "Iron_ore";
-        //Template.Texture = Content.Load<Texture2D>("iron_ore");
-        //Blocks.Add(Template);
+        Template = new Block();
+        Template.id = 5;
+        Template.name = "Iron_ore";
+        Template.Texture = Content.Load<Texture2D>("iron_ore");
+        Blocks.Add(Template);
+
+        Template = new Block();
+        Template.id = 6;
+        Template.apaque = true;
+        Template.name = "Leaves_oak";
+        Template.Texture = Content.Load<Texture2D>("leaves_oak_opaque");
+        Blocks.Add(Template);
+
+        Template = new Block();
+        Template.id = 7;
+        Template.name = "Oak_log";
+        
+        Template.Texture = Content.Load<Texture2D>("oak_log");
+        Blocks.Add(Template);
+
+
 
 
     }
@@ -202,11 +245,11 @@ public class Game1 : Game
         //{
         //    camera.Y += 10f;
         //}
-        Read_input(player, grid);
+        Read_input(player, grid,Block_list);
         base.Update(gameTime);
     }
 
-    static void Read_input(Player plr, int[,] grid)
+    static void Read_input(Player plr, int[,] grid, List<Block> list)
     {
         float relative_block_size = plr.Zoom;
         float block_gap = 58f * relative_block_size / 3.65f;
@@ -263,6 +306,22 @@ public class Game1 : Game
 
             plr.id_copy = grid[(int)y - 1, (int)x - 1];
         }
+        if(Keyboard.GetState().IsKeyDown(Keys.F))
+        {
+            Vector2 mousepos = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
+            double x = Math.Ceiling((double)mousepos.X / block_gap + plr.camera.X * relative_block_size);
+            double y = Math.Ceiling((double)mousepos.Y / block_gap + plr.camera.Y * relative_block_size);
+            Structure tree = new Structure();
+            tree.Struct = new int[,]{
+                { 0,1,1,1,0 },
+                { 0,6,1,1,0 },
+                { 6,6,1,1,6 },
+                { 6,6,1,6,6 },
+                { 0,0,1,0,0 },
+                { 0,0,1,0,0 }
+            };
+            tree.structure(tree, (int)x, grid, list);
+        }
 
     }
     protected override void Draw(GameTime gameTime)
@@ -274,7 +333,7 @@ public class Game1 : Game
         GraphicsDevice.Clear(Color.CornflowerBlue);
         for (int i = 0; i < 100; i++)
         {
-            for (int j = (int)(player.camera.X * relative_block_size) + 2; j < (int)(player.camera.X * relative_block_size) + 27; j++)
+            for (int j = (int)(player.camera.X * relative_block_size) + 2; j < (int)(player.camera.X * relative_block_size) + 47; j++)
             {
                 if (j <= 0)
                 {
@@ -294,7 +353,13 @@ public class Game1 : Game
                     _spriteBatch.End();
                     continue;
                 }
-
+                if (Block_list.Find(x => x.id == grid[i, j]).apaque == true)
+                {
+                    _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
+                    _spriteBatch.Draw(Block_list.Find(x => x.id == grid[i, j]).Texture, new Vector2(j * block_gap + -player.camera.X * block_gap * relative_block_size, i * block_gap + -player.camera.Y * block_gap * relative_block_size), null, Color.LawnGreen, 0f, Vector2.Zero, relative_block_size, SpriteEffects.None, 0f);
+                    _spriteBatch.End();
+                    continue;
+                }
 
                 _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
                 _spriteBatch.Draw(Block_list.Find(x => x.id == grid[i, j]).Texture, new Vector2(j * block_gap + -player.camera.X * block_gap * relative_block_size, i * block_gap + -player.camera.Y * block_gap * relative_block_size), null, Color.White, 0f, Vector2.Zero, relative_block_size, SpriteEffects.None, 0f);
