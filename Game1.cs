@@ -141,7 +141,7 @@ public class Game1 : Game
             };
         int tree_rate = 14;
         int Tree_r = 0;
-        for (int i = 0; i < 700; i++)
+        for (int i = 4; i < 700; i++)
         {
             Tree_r = random.Next(1, tree_rate);
             if (Tree_r >= tree_rate - 2)
@@ -264,19 +264,43 @@ public class Game1 : Game
         }
         if (Keyboard.GetState().IsKeyDown(Keys.W))
         {
-            plr.camera.Y -= speed;
+            Vector2 mousepos = (plr.position + new Vector2(0.5f, 0)) * new Vector2(block_gap, block_gap);
+            double x = Math.Ceiling((double)mousepos.X / block_gap + plr.camera.X * relative_block_size);
+            double y = Math.Ceiling((double)mousepos.Y / block_gap + plr.camera.Y * relative_block_size);
+
+            if (grid[(int)y - 1, (int)x - 1] == 0)
+            {plr.camera.Y -= speed; }
+            
         }
         if (Keyboard.GetState().IsKeyDown(Keys.S))
         {
-            plr.camera.Y += speed;
+            Vector2 mousepos = (plr.position + new Vector2(0.5f, 1)) * new Vector2(block_gap, block_gap);
+            double x = Math.Ceiling((double)mousepos.X / block_gap + plr.camera.X * relative_block_size);
+            double y = Math.Ceiling((double)mousepos.Y / block_gap + plr.camera.Y * relative_block_size);
+
+            if (grid[(int)y - 1, (int)x - 1] == 0)
+            { plr.camera.Y += speed;}
+            
         }
         if (Keyboard.GetState().IsKeyDown(Keys.A))
         {
-            plr.camera.X -= speed;
+            Vector2 mousepos = (plr.position + new Vector2(0, 0.5f)) * new Vector2(block_gap, block_gap);
+            double x = Math.Ceiling((double)mousepos.X / block_gap + plr.camera.X * relative_block_size);
+            double y = Math.Ceiling((double)mousepos.Y / block_gap + plr.camera.Y * relative_block_size);
+
+            if (grid[(int)y - 1, (int)x - 1] == 0)
+            { plr.camera.X -= speed;}
+            
         }
         if (Keyboard.GetState().IsKeyDown(Keys.D))
         {
-            plr.camera.X += speed;
+            Vector2 mousepos = (plr.position + new Vector2(1, 0.5f)) * new Vector2(block_gap, block_gap);
+            double x = Math.Ceiling((double)mousepos.X / block_gap + plr.camera.X * relative_block_size);
+            double y = Math.Ceiling((double)mousepos.Y / block_gap + plr.camera.Y * relative_block_size);
+
+            if (grid[(int)y - 1, (int)x - 1] == 0)
+            { plr.camera.X += speed;}
+            
         }
         if (Mouse.GetState().LeftButton == ButtonState.Pressed)
         {
@@ -322,8 +346,18 @@ public class Game1 : Game
             };
             tree.structure(tree, (int)x, grid, list);
         }
+        if (Keyboard.GetState().IsKeyDown(Keys.Q))
+        {
+            Vector2 mousepos = (plr.position + new Vector2(1,0.5f)) * new Vector2(block_gap, block_gap);
+            double x = Math.Ceiling((double)mousepos.X / block_gap + plr.camera.X * relative_block_size);
+            double y = Math.Ceiling((double)mousepos.Y / block_gap + plr.camera.Y * relative_block_size);
+
+            if (grid[(int)y - 1, (int)x - 1] != 0)
+            { }
+        }
 
     }
+    
     protected override void Draw(GameTime gameTime)
     {
         float relative_block_size = player.Zoom;
@@ -366,7 +400,9 @@ public class Game1 : Game
                 _spriteBatch.End();
             }
         }
-
+        _spriteBatch.Begin();
+        _spriteBatch.Draw(Block_list[3].Texture, player.position * new Vector2(block_gap, block_gap), null, Color.LawnGreen, 0f, Vector2.Zero, relative_block_size, SpriteEffects.None, 0f);
+        _spriteBatch.End();
         Vector2 mousepos = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
         double x = Math.Ceiling((double)mousepos.X / block_gap + player.camera.X);
         double y = Math.Ceiling((double)mousepos.Y / block_gap + player.camera.Y);
