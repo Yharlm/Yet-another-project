@@ -246,14 +246,27 @@ public class Game1 : Game
         //    camera.Y += 10f;
         //}
         Read_input(player, grid,Block_list);
+
         base.Update(gameTime);
     }
 
+    static bool CheckVertice(Vector2 Offset,Player plr,float block_gap, float relative_block_size, int[,]grid)
+    {
+        Vector2 mousepos = (plr.position + Offset) * new Vector2(block_gap, block_gap);
+        double x = Math.Ceiling((double)mousepos.X / block_gap + plr.camera.X * relative_block_size);
+        double y = Math.Ceiling((double)mousepos.Y / block_gap + plr.camera.Y * relative_block_size);
+
+        if (grid[(int)y - 1, (int)x - 1] == 0)
+        { return true; }
+        return false;
+    }
     static void Read_input(Player plr, int[,] grid, List<Block> list)
     {
+        float a = 0.1f;
         float relative_block_size = plr.Zoom;
         float block_gap = 58f * relative_block_size / 3.65f;
         float speed = 0.1f;
+
         if (Keyboard.GetState().IsKeyDown(Keys.OemMinus))
         {
             plr.Zoom += 0.01f;
@@ -264,41 +277,50 @@ public class Game1 : Game
         }
         if (Keyboard.GetState().IsKeyDown(Keys.W))
         {
-            Vector2 mousepos = (plr.position + new Vector2(0.5f, 0)) * new Vector2(block_gap, block_gap);
-            double x = Math.Ceiling((double)mousepos.X / block_gap + plr.camera.X * relative_block_size);
-            double y = Math.Ceiling((double)mousepos.Y / block_gap + plr.camera.Y * relative_block_size);
-
-            if (grid[(int)y - 1, (int)x - 1] == 0)
-            {plr.camera.Y -= speed; }
+            
+            if(CheckVertice(new Vector2(0.5f,0)
+                ,plr,block_gap,relative_block_size,grid)
+                )
+            { plr.camera.Y -= speed; }
             
         }
+        else if (
+                CheckVertice(new Vector2(0.5f, 1)
+                , plr, block_gap, relative_block_size, grid)
+                )
+                
+                { plr.gravity += 0.001f; plr.camera.Y += plr.gravity; }
+        else
+        { plr.gravity = 0.1f; }
+
+
+
+
         if (Keyboard.GetState().IsKeyDown(Keys.S))
         {
-            Vector2 mousepos = (plr.position + new Vector2(0.5f, 1)) * new Vector2(block_gap, block_gap);
-            double x = Math.Ceiling((double)mousepos.X / block_gap + plr.camera.X * relative_block_size);
-            double y = Math.Ceiling((double)mousepos.Y / block_gap + plr.camera.Y * relative_block_size);
-
-            if (grid[(int)y - 1, (int)x - 1] == 0)
+            if (
+                CheckVertice(new Vector2(0.5f, 1)
+                , plr, block_gap, relative_block_size, grid)
+                )
             { plr.camera.Y += speed;}
             
         }
+        
         if (Keyboard.GetState().IsKeyDown(Keys.A))
         {
-            Vector2 mousepos = (plr.position + new Vector2(0, 0.5f)) * new Vector2(block_gap, block_gap);
-            double x = Math.Ceiling((double)mousepos.X / block_gap + plr.camera.X * relative_block_size);
-            double y = Math.Ceiling((double)mousepos.Y / block_gap + plr.camera.Y * relative_block_size);
-
-            if (grid[(int)y - 1, (int)x - 1] == 0)
+            if (
+                CheckVertice(new Vector2(0, 0.5f)
+                , plr, block_gap, relative_block_size, grid)
+                )
             { plr.camera.X -= speed;}
             
         }
         if (Keyboard.GetState().IsKeyDown(Keys.D))
         {
-            Vector2 mousepos = (plr.position + new Vector2(1, 0.5f)) * new Vector2(block_gap, block_gap);
-            double x = Math.Ceiling((double)mousepos.X / block_gap + plr.camera.X * relative_block_size);
-            double y = Math.Ceiling((double)mousepos.Y / block_gap + plr.camera.Y * relative_block_size);
-
-            if (grid[(int)y - 1, (int)x - 1] == 0)
+            if (
+                CheckVertice(new Vector2(1, 0.5f)
+                , plr, block_gap, relative_block_size, grid))
+                
             { plr.camera.X += speed;}
             
         }

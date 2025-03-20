@@ -13,6 +13,7 @@ namespace Project3
         public float Zoom = 1.0f;
         public int id_copy = 0;
         public Vector2 position = new Vector2(17, 5);
+        public float gravity = 0.1f;
 
     }
 }
