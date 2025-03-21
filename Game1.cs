@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics.PackedVector;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace Project3;
 
@@ -20,6 +21,7 @@ public class Game1 : Game
     public int[,] Background_grid = new int[500, 1000];
     public Player player = new Player();
     public Vector2 mousepos;
+    public AnimatedTexture PlayerWalkRight;
 
 
 
@@ -38,7 +40,8 @@ public class Game1 : Game
         _graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
-        
+        PlayerWalkRight = new AnimatedTexture(Vector2.Zero, 0, relative_block_size, 0);
+
 
 
     }
@@ -222,16 +225,17 @@ public class Game1 : Game
 
     protected override void LoadContent()
     {
+        PlayerWalkRight.Load(Content, "walking player-Sheet", 13, 10);
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         Create_Blocks(Block_list);
-        Generate_terrain(grid, Background_grid, Block_list);
-        //for (int i = 0; i < 500; i++)
-        //{
-        //    for (int j = 0; j < 1000; j++)
-        //    {
-        //        grid[i, j] = 1;
-        //    }
-        //}
+        //Generate_terrain(grid, Background_grid, Block_list);
+        for (int i = 0; i < 500; i++)
+        {
+            for (int j = 0; j < 1000; j++)
+            {
+                grid[i, j] = 1;
+            }
+        }
         // TODO: use this.Content to load your game content here
     }
 
@@ -246,6 +250,11 @@ public class Game1 : Game
         //    camera.Y += 10f;
         //}
         Read_input(player, grid,Block_list);
+
+
+        //animation stff
+        float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
+        PlayerWalkRight.UpdateFrame(elapsed);
 
         base.Update(gameTime);
     }
@@ -266,7 +275,7 @@ public class Game1 : Game
         float relative_block_size = plr.Zoom;
         float block_gap = 58f * relative_block_size / 3.65f;
         float speed = 0.1f;
-
+        plr.is_walking = false;
         if (Keyboard.GetState().IsKeyDown(Keys.OemMinus))
         {
             plr.Zoom += 0.01f;
@@ -317,6 +326,7 @@ public class Game1 : Game
         }
         if (Keyboard.GetState().IsKeyDown(Keys.D))
         {
+            plr.is_walking = true;
             if (
                 CheckVertice(new Vector2(1, 0.5f)
                 , plr, block_gap, relative_block_size, grid))
@@ -379,11 +389,12 @@ public class Game1 : Game
         }
 
     }
-    
+    public float relative_block_size;
+    public float block_gap;
     protected override void Draw(GameTime gameTime)
     {
-        float relative_block_size = player.Zoom;
-        float block_gap = 58f * relative_block_size / 3.65f;
+        relative_block_size= player.Zoom;
+        block_gap = 58f * relative_block_size / 3.65f;
         Color Backround = Color.FromNonPremultiplied(170, 170, 170, 255);
         Vector2 WorldPos = new Vector2(0, 0);
         GraphicsDevice.Clear(Color.CornflowerBlue);
@@ -435,6 +446,22 @@ public class Game1 : Game
 
         _spriteBatch.End();
 
+        PlayerWalkRight.Scale = relative_block_size;
+        if(player.is_walking)
+        {
+            PlayerWalkRight.Play();
+        }
+        else
+        {
+            PlayerWalkRight.Pause();
+            PlayerWalkRight.frame = 3;
+
+        }
+        Vector2 NewPos = new Vector2(player.position.X, player.position.Y) + new Vector2(-0.5f,-2.8f);
+        _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
+        // Replacing the normal SpriteBatch.Draw call to use the version from the "AnimatedTexture" class instead
+        PlayerWalkRight.DrawFrame(_spriteBatch, NewPos * new Vector2(block_gap, block_gap));
+        _spriteBatch.End();
 
 
         base.Draw(gameTime);
