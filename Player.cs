@@ -16,6 +16,9 @@ namespace Project3
         public Vector2 position = new Vector2(17, 5);
         public float gravity = 0.1f;
         public bool is_walking = false;
-
+        public AnimatedTexture player_texture;
+        public AnimatedTexture player_walkL;
+        public AnimatedTexture player_walkR;
+        public string action = "idle";
     }
 }

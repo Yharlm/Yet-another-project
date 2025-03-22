@@ -22,6 +22,7 @@ public class Game1 : Game
     public Player player = new Player();
     public Vector2 mousepos;
     public AnimatedTexture PlayerWalkRight;
+    public AnimatedTexture PlayerWalkLeft;
 
 
 
@@ -41,6 +42,7 @@ public class Game1 : Game
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
         PlayerWalkRight = new AnimatedTexture(Vector2.Zero, 0, relative_block_size, 0);
+        PlayerWalkLeft = new AnimatedTexture(Vector2.Zero, 0, relative_block_size, 0);
 
 
 
@@ -225,7 +227,11 @@ public class Game1 : Game
 
     protected override void LoadContent()
     {
+        PlayerWalkLeft.Load(Content, "Leftt", 13, 10);
         PlayerWalkRight.Load(Content, "walking player-Sheet", 13, 10);
+        player.player_texture = PlayerWalkRight;
+        player.player_walkR = PlayerWalkRight;
+        player.player_walkL = PlayerWalkLeft;
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         Create_Blocks(Block_list);
         //Generate_terrain(grid, Background_grid, Block_list);
@@ -255,6 +261,7 @@ public class Game1 : Game
         //animation stff
         float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
         PlayerWalkRight.UpdateFrame(elapsed);
+        PlayerWalkLeft.UpdateFrame(elapsed);
 
         base.Update(gameTime);
     }
@@ -316,7 +323,10 @@ public class Game1 : Game
         }
         
         if (Keyboard.GetState().IsKeyDown(Keys.A))
-        {
+        {   
+            plr.is_walking = true;
+            plr.player_texture = plr.player_walkL;
+
             if (
                 CheckVertice(new Vector2(0, 0.5f)
                 , plr, block_gap, relative_block_size, grid)
@@ -326,7 +336,10 @@ public class Game1 : Game
         }
         if (Keyboard.GetState().IsKeyDown(Keys.D))
         {
+            
+
             plr.is_walking = true;
+            plr.player_texture = plr.player_walkR;
             if (
                 CheckVertice(new Vector2(1, 0.5f)
                 , plr, block_gap, relative_block_size, grid))
@@ -447,20 +460,22 @@ public class Game1 : Game
         _spriteBatch.End();
 
         PlayerWalkRight.Scale = relative_block_size;
-        if(player.is_walking)
+        PlayerWalkLeft.Scale = relative_block_size;
+        if (player.is_walking)
         {
-            PlayerWalkRight.Play();
+            player.player_texture.Play();
         }
         else
         {
-            PlayerWalkRight.Pause();
-            PlayerWalkRight.frame = 3;
+            player.player_texture.Pause();
+            player.player_texture.frame = 3;
 
         }
         Vector2 NewPos = new Vector2(player.position.X, player.position.Y) + new Vector2(-0.5f,-2.8f);
         _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
         // Replacing the normal SpriteBatch.Draw call to use the version from the "AnimatedTexture" class instead
-        PlayerWalkRight.DrawFrame(_spriteBatch, NewPos * new Vector2(block_gap, block_gap));
+        player.player_texture.DrawFrame(_spriteBatch, NewPos * new Vector2(block_gap, block_gap));
+        
         _spriteBatch.End();
 
 
