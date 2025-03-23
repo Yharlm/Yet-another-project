@@ -41,8 +41,8 @@ public class Game1 : Game
         _graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
-        PlayerWalkRight = new AnimatedTexture(Vector2.Zero, 0, relative_block_size, 0);
-        PlayerWalkLeft = new AnimatedTexture(Vector2.Zero, 0, relative_block_size, 0);
+        PlayerWalkRight = new AnimatedTexture(Vector2.Zero, 0, 1, 0);
+        PlayerWalkLeft = new AnimatedTexture(Vector2.Zero, 0, 1, 0);
 
 
 
@@ -281,7 +281,7 @@ public class Game1 : Game
         float a = 0.1f;
         float relative_block_size = plr.Zoom;
         float block_gap = 58f * relative_block_size / 3.65f;
-        float speed = 0.1f;
+        float speed = 0.035f;
         plr.is_walking = false;
         if (Keyboard.GetState().IsKeyDown(Keys.OemMinus))
         {
@@ -355,6 +355,7 @@ public class Game1 : Game
             double y = Math.Ceiling((double)mousepos.Y / block_gap + plr.camera.Y * relative_block_size);
 
             grid[(int)y - 1, (int)x - 1] = plr.id_copy;
+            
         }
         
         if (Mouse.GetState().RightButton == ButtonState.Pressed)
@@ -406,6 +407,7 @@ public class Game1 : Game
     public float block_gap;
     protected override void Draw(GameTime gameTime)
     {
+        player.position = player.camera;
         relative_block_size= player.Zoom;
         block_gap = 58f * relative_block_size / 3.65f;
         Color Backround = Color.FromNonPremultiplied(170, 170, 170, 255);
@@ -422,7 +424,7 @@ public class Game1 : Game
                 if (Minecraft.Get_ByID(Background_grid[i, j], Block_list) != null)
                 {
                     _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
-                    _spriteBatch.Draw(Block_list.Find(x => x.id == Background_grid[i, j]).Texture, new Vector2(j * block_gap + -player.camera.X * block_gap * relative_block_size, i * block_gap + -player.camera.Y * block_gap * relative_block_size), null, Backround, 0f, Vector2.Zero, relative_block_size, SpriteEffects.None, 0f);
+                    _spriteBatch.Draw(Block_list.Find(x => x.id == Background_grid[i, j]).Texture, new Vector2(j * block_gap , i * block_gap), null, Backround, 0f, Vector2.Zero, relative_block_size, SpriteEffects.None, 0f);
                     _spriteBatch.End();
 
                 }
@@ -442,12 +444,12 @@ public class Game1 : Game
                 }
 
                 _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
-                _spriteBatch.Draw(Block_list.Find(x => x.id == grid[i, j]).Texture, new Vector2(j * block_gap + -player.camera.X * block_gap * relative_block_size, i * block_gap + -player.camera.Y * block_gap * relative_block_size), null, Color.White, 0f, Vector2.Zero, relative_block_size, SpriteEffects.None, 0f);
+                _spriteBatch.Draw(Block_list.Find(x => x.id == grid[i, j]).Texture, new Vector2(j * block_gap , i * block_gap ), null, Color.White, 0f, Vector2.Zero, relative_block_size, SpriteEffects.None, 0f);
                 _spriteBatch.End();
             }
         }
         _spriteBatch.Begin();
-        _spriteBatch.Draw(Block_list[3].Texture, player.position * new Vector2(block_gap, block_gap), null, Color.LawnGreen, 0f, Vector2.Zero, relative_block_size, SpriteEffects.None, 0f);
+        _spriteBatch.Draw(Block_list[3].Texture, player.camera * new Vector2(block_gap, block_gap), null, Color.LawnGreen, 0f, Vector2.Zero, relative_block_size, SpriteEffects.None, 0f);
         _spriteBatch.End();
         Vector2 mousepos = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
         double x = Math.Ceiling((double)mousepos.X / block_gap + player.camera.X);
@@ -459,8 +461,8 @@ public class Game1 : Game
 
         _spriteBatch.End();
 
-        PlayerWalkRight.Scale = relative_block_size;
-        PlayerWalkLeft.Scale = relative_block_size;
+        PlayerWalkRight.Scale = relative_block_size * 1/2;
+        PlayerWalkLeft.Scale = relative_block_size * 1/2;
         if (player.is_walking)
         {
             player.player_texture.Play();
@@ -471,7 +473,7 @@ public class Game1 : Game
             player.player_texture.frame = 3;
 
         }
-        Vector2 NewPos = new Vector2(player.position.X, player.position.Y) + new Vector2(-0.5f,-2.8f);
+        Vector2 NewPos =new Vector2(0,-1);
         _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
         // Replacing the normal SpriteBatch.Draw call to use the version from the "AnimatedTexture" class instead
         player.player_texture.DrawFrame(_spriteBatch, NewPos * new Vector2(block_gap, block_gap));
