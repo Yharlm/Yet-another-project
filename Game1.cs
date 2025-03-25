@@ -1,10 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Graphics.PackedVector;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace Project3;
 
@@ -78,7 +76,7 @@ public class Game1 : Game
             else if (c == max)
             { Height--; }
 
-            Minecraft.Fill_block(j, Height, grid,backrond, Minecraft.GetBlock("Grass_block", list));
+            Minecraft.Fill_block(j, Height, grid, backrond, Minecraft.GetBlock("Grass_block", list));
 
             int count = 1;
             while (count < dirt_Height)
@@ -107,7 +105,7 @@ public class Game1 : Game
             }
             j++;
         }
-        
+
 
         for (int j = 12; j < Width - 12; j++)
         {
@@ -130,8 +128,8 @@ public class Game1 : Game
 
 
         }
-        
-        
+
+
         ConsoleColor Default = ConsoleColor.Cyan;
 
 
@@ -210,7 +208,7 @@ public class Game1 : Game
         Template = new Block();
         Template.id = 7;
         Template.name = "Oak_log";
-        
+
         Template.Texture = Content.Load<Texture2D>("oak_log");
         Blocks.Add(Template);
 
@@ -227,6 +225,7 @@ public class Game1 : Game
 
     protected override void LoadContent()
     {
+
         PlayerWalkLeft.Load(Content, "Leftt", 13, 10);
         PlayerWalkRight.Load(Content, "walking player-Sheet", 13, 10);
         player.player_texture = PlayerWalkRight;
@@ -255,7 +254,7 @@ public class Game1 : Game
         //{
         //    camera.Y += 10f;
         //}
-        Read_input(player, grid,Block_list);
+        Read_input(player, grid, Block_list);
 
 
         //animation stff
@@ -266,7 +265,7 @@ public class Game1 : Game
         base.Update(gameTime);
     }
 
-    static bool CheckVertice(Vector2 Offset,Player plr,float block_gap, float relative_block_size, int[,]grid)
+    static bool CheckVertice(Vector2 Offset, Player plr, float block_gap, float relative_block_size, int[,] grid)
     {
         Vector2 mousepos = (plr.position + Offset) * new Vector2(block_gap, block_gap);
         double x = Math.Ceiling((double)mousepos.X / block_gap + plr.camera.X * relative_block_size);
@@ -282,9 +281,17 @@ public class Game1 : Game
         float relative_block_size = plr.Zoom;
         float block_gap = 58f * relative_block_size / 3.65f;
         float speed = 0.035f;
+        Vector2 mousepos = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
+        double x = Math.Ceiling((double)mousepos.X / block_gap + plr.camera.X * relative_block_size);
+        double y = Math.Ceiling((double)mousepos.Y / block_gap + plr.camera.Y * relative_block_size);
+
+
+        
         plr.is_walking = false;
+
         if (Keyboard.GetState().IsKeyDown(Keys.OemMinus))
         {
+
             plr.Zoom += 0.01f;
         }
         if (Keyboard.GetState().IsKeyDown(Keys.OemPlus))
@@ -293,19 +300,19 @@ public class Game1 : Game
         }
         if (Keyboard.GetState().IsKeyDown(Keys.W))
         {
-            
-            if(CheckVertice(new Vector2(0.5f,0)
-                ,plr,block_gap,relative_block_size,grid)
+
+            if (CheckVertice(new Vector2(0.5f, 0)
+                , plr, block_gap, relative_block_size, grid)
                 )
             { plr.camera.Y -= speed; }
-            
+
         }
         else if (
                 CheckVertice(new Vector2(0.5f, 1)
                 , plr, block_gap, relative_block_size, grid)
                 )
-                
-                { plr.gravity += 0.001f; plr.camera.Y += plr.gravity; }
+
+        { plr.gravity += 0.001f; plr.camera.Y += plr.gravity; }
         else
         { plr.gravity = 0.1f; }
 
@@ -318,12 +325,12 @@ public class Game1 : Game
                 CheckVertice(new Vector2(0.5f, 1)
                 , plr, block_gap, relative_block_size, grid)
                 )
-            { plr.camera.Y += speed;}
-            
+            { plr.camera.Y += speed; }
+
         }
-        
+
         if (Keyboard.GetState().IsKeyDown(Keys.A))
-        {   
+        {
             plr.is_walking = true;
             plr.player_texture = plr.player_walkL;
 
@@ -331,56 +338,47 @@ public class Game1 : Game
                 CheckVertice(new Vector2(0, 0.5f)
                 , plr, block_gap, relative_block_size, grid)
                 )
-            { plr.camera.X -= speed;}
-            
+            { plr.camera.X -= speed; }
+
         }
         if (Keyboard.GetState().IsKeyDown(Keys.D))
         {
-            
+
 
             plr.is_walking = true;
             plr.player_texture = plr.player_walkR;
             if (
                 CheckVertice(new Vector2(1, 0.5f)
                 , plr, block_gap, relative_block_size, grid))
-                
-            { plr.camera.X += speed;}
-            
+
+            { plr.camera.X += speed; }
+
         }
         if (Mouse.GetState().LeftButton == ButtonState.Pressed)
         {
 
-            Vector2 mousepos = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
-            double x = Math.Ceiling((double)mousepos.X / block_gap + plr.camera.X * relative_block_size);
-            double y = Math.Ceiling((double)mousepos.Y / block_gap + plr.camera.Y * relative_block_size);
 
             grid[(int)y - 1, (int)x - 1] = plr.id_copy;
-            
+
         }
-        
+
         if (Mouse.GetState().RightButton == ButtonState.Pressed)
         {
 
-            Vector2 mousepos = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
-            double x = Math.Ceiling((double)mousepos.X / block_gap + plr.camera.X * relative_block_size);
-            double y = Math.Ceiling((double)mousepos.Y / block_gap + plr.camera.Y * relative_block_size);
+
 
             grid[(int)y - 1, (int)x - 1] = 0;
         }
         if (Keyboard.GetState().IsKeyDown(Keys.E))
         {
 
-            Vector2 mousepos = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
-            double x = Math.Ceiling((double)mousepos.X / block_gap + plr.camera.X * relative_block_size);
-            double y = Math.Ceiling((double)mousepos.Y / block_gap + plr.camera.Y * relative_block_size);
+
 
             plr.id_copy = grid[(int)y - 1, (int)x - 1];
         }
-        if(Keyboard.GetState().IsKeyDown(Keys.F))
+        if (Keyboard.GetState().IsKeyDown(Keys.F))
         {
-            Vector2 mousepos = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
-            double x = Math.Ceiling((double)mousepos.X / block_gap + plr.camera.X * relative_block_size);
-            double y = Math.Ceiling((double)mousepos.Y / block_gap + plr.camera.Y * relative_block_size);
+
             Structure tree = new Structure();
             tree.Struct = new int[,]{
                 { 0,1,1,1,0 },
@@ -394,9 +392,7 @@ public class Game1 : Game
         }
         if (Keyboard.GetState().IsKeyDown(Keys.Q))
         {
-            Vector2 mousepos = (plr.position + new Vector2(1,0.5f)) * new Vector2(block_gap, block_gap);
-            double x = Math.Ceiling((double)mousepos.X / block_gap + plr.camera.X * relative_block_size);
-            double y = Math.Ceiling((double)mousepos.Y / block_gap + plr.camera.Y * relative_block_size);
+
 
             if (grid[(int)y - 1, (int)x - 1] != 0)
             { }
@@ -407,8 +403,7 @@ public class Game1 : Game
     public float block_gap;
     protected override void Draw(GameTime gameTime)
     {
-        player.position = player.camera;
-        relative_block_size= player.Zoom;
+        relative_block_size = player.Zoom;
         block_gap = 58f * relative_block_size / 3.65f;
         Color Backround = Color.FromNonPremultiplied(170, 170, 170, 255);
         Vector2 WorldPos = new Vector2(0, 0);
@@ -424,7 +419,7 @@ public class Game1 : Game
                 if (Minecraft.Get_ByID(Background_grid[i, j], Block_list) != null)
                 {
                     _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
-                    _spriteBatch.Draw(Block_list.Find(x => x.id == Background_grid[i, j]).Texture, new Vector2(j * block_gap , i * block_gap), null, Backround, 0f, Vector2.Zero, relative_block_size, SpriteEffects.None, 0f);
+                    _spriteBatch.Draw(Block_list.Find(x => x.id == Background_grid[i, j]).Texture, new Vector2(j * block_gap + -player.camera.X * block_gap * relative_block_size, i * block_gap + -player.camera.Y * block_gap * relative_block_size), null, Backround, 0f, Vector2.Zero, relative_block_size, SpriteEffects.None, 0f);
                     _spriteBatch.End();
 
                 }
@@ -438,18 +433,18 @@ public class Game1 : Game
                 if (Block_list.Find(x => x.id == grid[i, j]).apaque == true)
                 {
                     _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
-                    _spriteBatch.Draw(Block_list.Find(x => x.id == grid[i, j]).Texture, new Vector2(j * block_gap + -player.camera.X * block_gap * relative_block_size, i * block_gap + -player.camera.Y * block_gap * relative_block_size), null, Color.LawnGreen, 0f, Vector2.Zero, relative_block_size, SpriteEffects.None, 0f);
+                    _spriteBatch.Draw(Block_list.Find(x => x.id == grid[i, j]).Texture, new Vector2(block_gap + -player.camera.X * block_gap * relative_block_size, block_gap + -player.camera.Y * block_gap * relative_block_size), null, Color.LawnGreen, 0f, Vector2.Zero, relative_block_size, SpriteEffects.None, 0f);
                     _spriteBatch.End();
                     continue;
                 }
 
                 _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
-                _spriteBatch.Draw(Block_list.Find(x => x.id == grid[i, j]).Texture, new Vector2(j * block_gap , i * block_gap ), null, Color.White, 0f, Vector2.Zero, relative_block_size, SpriteEffects.None, 0f);
+                _spriteBatch.Draw(Block_list.Find(x => x.id == grid[i, j]).Texture, new Vector2(j * block_gap + -player.camera.X * block_gap * relative_block_size, i * block_gap + -player.camera.Y * block_gap * relative_block_size), null, Color.White, 0f, Vector2.Zero, relative_block_size, SpriteEffects.None, 0f);
                 _spriteBatch.End();
             }
         }
         _spriteBatch.Begin();
-        _spriteBatch.Draw(Block_list[3].Texture, player.camera * new Vector2(block_gap, block_gap), null, Color.LawnGreen, 0f, Vector2.Zero, relative_block_size, SpriteEffects.None, 0f);
+        _spriteBatch.Draw(Block_list[3].Texture, player.position * new Vector2(block_gap, block_gap), null, Color.LawnGreen, 0f, Vector2.Zero, relative_block_size, SpriteEffects.None, 0f);
         _spriteBatch.End();
         Vector2 mousepos = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
         double x = Math.Ceiling((double)mousepos.X / block_gap + player.camera.X);
@@ -458,11 +453,13 @@ public class Game1 : Game
         _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), "X: " + player.camera.X + " Y: " + player.camera.Y, new Vector2(0, 0), Color.White);
         _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), "X:" + x + "Y:" + y, new Vector2(0, 20), Backround);
         _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), player.id_copy.ToString(), new Vector2(0, 40), Backround);
+        _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), Mouse.GetState().Position.ToString(), new Vector2(0, 40), Color.Red);
+
 
         _spriteBatch.End();
 
-        PlayerWalkRight.Scale = relative_block_size * 1/2;
-        PlayerWalkLeft.Scale = relative_block_size * 1/2;
+        PlayerWalkRight.Scale = relative_block_size;
+        PlayerWalkLeft.Scale = relative_block_size;
         if (player.is_walking)
         {
             player.player_texture.Play();
@@ -473,11 +470,11 @@ public class Game1 : Game
             player.player_texture.frame = 3;
 
         }
-        Vector2 NewPos =new Vector2(0,-1);
+        Vector2 NewPos = new Vector2(player.position.X, player.position.Y) + new Vector2(-0.5f, -2.8f);
         _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
         // Replacing the normal SpriteBatch.Draw call to use the version from the "AnimatedTexture" class instead
         player.player_texture.DrawFrame(_spriteBatch, NewPos * new Vector2(block_gap, block_gap));
-        
+
         _spriteBatch.End();
 
 
