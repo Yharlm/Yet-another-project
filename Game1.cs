@@ -107,7 +107,7 @@ public class Game1 : Game
         }
 
 
-        for (int j = 12; j < Width - 12; j++)
+        for (int j = 32; j < Width - 32; j++)
         {
 
             int count = random.Next(0, 11);
@@ -233,14 +233,14 @@ public class Game1 : Game
         player.player_walkL = PlayerWalkLeft;
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         Create_Blocks(Block_list);
-        //Generate_terrain(grid, Background_grid, Block_list);
-        for (int i = 0; i < 500; i++)
-        {
-            for (int j = 0; j < 1000; j++)
-            {
-                grid[i, j] = 1;
-            }
-        }
+        Generate_terrain(grid, Background_grid, Block_list);
+        //for (int i = 0; i < 500; i++)
+        //{
+        //    for (int j = 0; j < 1000; j++)
+        //    {
+        //        grid[i, j] = 1;
+        //    }
+        //}
         // TODO: use this.Content to load your game content here
     }
 
@@ -286,7 +286,7 @@ public class Game1 : Game
         double y = Math.Ceiling((double)mousepos.Y / block_gap + plr.camera.Y * relative_block_size);
 
 
-        
+
         plr.is_walking = false;
 
         if (Keyboard.GetState().IsKeyDown(Keys.OemMinus))
@@ -298,23 +298,25 @@ public class Game1 : Game
         {
             plr.Zoom -= 0.01f;
         }
-        if (Keyboard.GetState().IsKeyDown(Keys.W))
+        if (Keyboard.GetState().IsKeyDown(Keys.W) || Keyboard.GetState().IsKeyDown(Keys.Space))
         {
+            plr.jump();
+            if (CheckVertice(new Vector2(0.5f, 0), plr, block_gap, relative_block_size, grid))
+            {
+                
+                 plr.grounded = true;
+                
 
-            if (CheckVertice(new Vector2(0.5f, 0)
-                , plr, block_gap, relative_block_size, grid)
-                )
-            { plr.camera.Y -= speed; }
+
+            }
 
         }
         else if (
-                CheckVertice(new Vector2(0.5f, 1)
-                , plr, block_gap, relative_block_size, grid)
-                )
+                CheckVertice(new Vector2(0.5f, 1), plr, block_gap, relative_block_size, grid))
 
         { plr.gravity += 0.001f; plr.camera.Y += plr.gravity; }
         else
-        { plr.gravity = 0.1f; }
+        { plr.gravity = 0.1f; plr.grounded = false; plr.JumpPower = 1; }
 
 
 
@@ -398,6 +400,7 @@ public class Game1 : Game
             { }
         }
 
+
     }
     public float relative_block_size;
     public float block_gap;
@@ -433,7 +436,7 @@ public class Game1 : Game
                 if (Block_list.Find(x => x.id == grid[i, j]).apaque == true)
                 {
                     _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
-                    _spriteBatch.Draw(Block_list.Find(x => x.id == grid[i, j]).Texture, new Vector2(block_gap + -player.camera.X * block_gap * relative_block_size, block_gap + -player.camera.Y * block_gap * relative_block_size), null, Color.LawnGreen, 0f, Vector2.Zero, relative_block_size, SpriteEffects.None, 0f);
+                    _spriteBatch.Draw(Block_list.Find(x => x.id == grid[i, j]).Texture, new Vector2(j * block_gap + -player.camera.X * block_gap * relative_block_size, i * block_gap + -player.camera.Y * block_gap * relative_block_size), null, Color.LawnGreen, 0f, Vector2.Zero, relative_block_size, SpriteEffects.None, 0f);
                     _spriteBatch.End();
                     continue;
                 }
@@ -454,7 +457,7 @@ public class Game1 : Game
         _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), "X:" + x + "Y:" + y, new Vector2(0, 20), Backround);
         _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), player.id_copy.ToString(), new Vector2(0, 40), Backround);
         _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), Mouse.GetState().Position.ToString(), new Vector2(0, 40), Color.Red);
-
+        _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), player.jump_val.ToString(), new Vector2(0, 60), Color.Red);
 
         _spriteBatch.End();
 

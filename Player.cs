@@ -20,5 +20,22 @@ namespace Project3
         public AnimatedTexture player_walkL;
         public AnimatedTexture player_walkR;
         public string action = "idle";
+        public bool Jumped = false;
+        public void jump()
+        {
+            if (grounded)
+            {   jump_val =0.3f*(float)Math.Sin(JumpPower);
+                camera.Y += jump_val;
+
+
+                JumpPower += 0.1f;
+                
+            }
+            
+        }
+        public float JumpPower = 0.5f;
+        public float jump_val = 0;
+        public bool grounded = false;
+        
     }
 }
