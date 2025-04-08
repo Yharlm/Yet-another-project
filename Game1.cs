@@ -280,13 +280,25 @@ public class Game1 : Game
         float a = 0.1f;
         float relative_block_size = plr.Zoom;
         float block_gap = 58f * relative_block_size / 3.65f;
-        float speed = 0.035f;
+        float speed = 0.055f;
         Vector2 mousepos = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
         double x = Math.Ceiling((double)mousepos.X / block_gap + plr.camera.X * relative_block_size);
         double y = Math.Ceiling((double)mousepos.Y / block_gap + plr.camera.Y * relative_block_size);
 
 
+        if (plr.Jumped)
+        {
+            if (CheckVertice(new Vector2(0.5f, 1), plr, block_gap, relative_block_size, grid) == false) // returns true if theres nothing under player
+            {
+                
+                plr.jump_val = 1;
+                plr.Jumped = false;
+                plr.has_jumped = false;
+                plr.is_falling_fast = false;
+            }
+            plr.jump();
 
+        }
         plr.is_walking = false;
 
         if (Keyboard.GetState().IsKeyDown(Keys.OemMinus))
@@ -298,25 +310,32 @@ public class Game1 : Game
         {
             plr.Zoom -= 0.01f;
         }
+
+
+        
+
         if (Keyboard.GetState().IsKeyDown(Keys.W) || Keyboard.GetState().IsKeyDown(Keys.Space))
         {
-            plr.jump();
-            if (CheckVertice(new Vector2(0.5f, 0), plr, block_gap, relative_block_size, grid))
+
+            if (!plr.has_jumped)
             {
-                
-                 plr.grounded = true;
-                
+
+                plr.has_jumped = true;
+                plr.Jumped = true;
 
 
             }
 
         }
-        else if (
-                CheckVertice(new Vector2(0.5f, 1), plr, block_gap, relative_block_size, grid))
 
-        { plr.gravity += 0.001f; plr.camera.Y += plr.gravity; }
+        if (CheckVertice(new Vector2(0.5f, 1), plr, block_gap, relative_block_size, grid))
+        {
+            plr.gravity += 0.001f; plr.camera.Y += plr.gravity;
+        }
         else
-        { plr.gravity = 0.1f; plr.grounded = false; plr.JumpPower = 1; }
+        {
+            plr.gravity = 0.1f; plr.JumpPower = 1;
+        }
 
 
 
