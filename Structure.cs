@@ -87,7 +87,11 @@ namespace Project3
 
 
                     Block block = list.Find(x => x.id == structure.Struct[i - Local_y, j - Local_x]);
-                     grid[i,j] = ID;
+                    if(i < grid.GetLength(0) && j < grid.GetLength(1))
+                    {
+                        grid[i,j] = ID;
+                    }
+                    
 
 
 

@@ -296,7 +296,12 @@ public class Game1 : Game
                 plr.has_jumped = false;
                 plr.is_falling_fast = false;
             }
-            plr.jump();
+            if(CheckVertice(new Vector2(0.5f, -1.21f), plr, block_gap, relative_block_size, grid) == false)
+            {
+                
+                plr.is_falling_fast = true;
+            }
+            plr.jump();    
 
         }
         plr.is_walking = false;
@@ -387,8 +392,8 @@ public class Game1 : Game
         {
 
 
-
-            grid[(int)y - 1, (int)x - 1] = 0;
+            Minecraft.Break_block((int)x - 1, (int)y - 1, grid, list, plr);
+            
         }
         if (Keyboard.GetState().IsKeyDown(Keys.E))
         {
@@ -397,20 +402,7 @@ public class Game1 : Game
 
             plr.id_copy = grid[(int)y - 1, (int)x - 1];
         }
-        if (Keyboard.GetState().IsKeyDown(Keys.F))
-        {
-
-            Structure tree = new Structure();
-            tree.Struct = new int[,]{
-                { 0,1,1,1,0 },
-                { 0,6,1,1,0 },
-                { 6,6,1,1,6 },
-                { 6,6,1,6,6 },
-                { 0,0,1,0,0 },
-                { 0,0,1,0,0 }
-            };
-            tree.structure(tree, (int)x, grid, list);
-        }
+        
         if (Keyboard.GetState().IsKeyDown(Keys.Q))
         {
 
@@ -496,7 +488,17 @@ public class Game1 : Game
         _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
         // Replacing the normal SpriteBatch.Draw call to use the version from the "AnimatedTexture" class instead
         player.player_texture.DrawFrame(_spriteBatch, NewPos * new Vector2(block_gap, block_gap));
+        int count = 0;
+        
+        foreach(var b in player.Inventoy)
+        {
+            _spriteBatch.Draw(b.Texture, new Vector2(30*count,40) , null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+            _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), b.quantity.ToString(), new Vector2(30 * count, 60), Color.Wheat);
 
+            
+            count++;
+
+        }
         _spriteBatch.End();
 
 

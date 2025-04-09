@@ -10,6 +10,7 @@ namespace Project3
 {
     public class Player
     {
+        public bool Back_Place = false;
         public Vector2 camera = new Vector2(0, 0);
         public float Zoom = 1.0f;
         public int id_copy = 0;
@@ -51,5 +52,7 @@ namespace Project3
         public float jump_val = 0;
         public bool has_jumped = false;
         
+        
+        public List<Block> Inventoy = new List<Block> ();
     }
 }

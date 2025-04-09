@@ -9,6 +9,8 @@ namespace Project3
 {
     public class Block
     {
+        public string Category;
+        public int quantity = 1;
         public int id = -1;
         public Texture2D Texture;
         public string name = string.Empty;
