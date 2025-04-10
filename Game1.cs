@@ -37,6 +37,9 @@ public class Game1 : Game
     public Game1()
     {
         _graphics = new GraphicsDeviceManager(this);
+        _graphics.PreferredBackBufferWidth = 1540;
+        _graphics.PreferredBackBufferHeight = 1080;
+        _graphics.ApplyChanges();
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
         PlayerWalkRight = new AnimatedTexture(Vector2.Zero, 0, 1, 0);
@@ -177,24 +180,28 @@ public class Game1 : Game
         Template = new Block();
         Template.id = 2;
         Template.name = "Dirt";
+
         Template.Texture = Content.Load<Texture2D>("dirt");
         Blocks.Add(Template);
 
         Template = new Block();
         Template.id = 3;
         Template.name = "Stone";
+        Template.stength = 45;
         Template.Texture = Content.Load<Texture2D>("stone");
         Blocks.Add(Template);
 
         Template = new Block();
         Template.id = 4;
         Template.name = "Coal_ore";
+        Template.stength = 45;
         Template.Texture = Content.Load<Texture2D>("coal_ore");
         Blocks.Add(Template);
 
         Template = new Block();
         Template.id = 5;
         Template.name = "Iron_ore";
+        Template.stength = 45;
         Template.Texture = Content.Load<Texture2D>("iron_ore");
         Blocks.Add(Template);
 
@@ -208,7 +215,7 @@ public class Game1 : Game
         Template = new Block();
         Template.id = 7;
         Template.name = "Oak_log";
-
+        Template.stength = 25;
         Template.Texture = Content.Load<Texture2D>("oak_log");
         Blocks.Add(Template);
 
@@ -255,7 +262,10 @@ public class Game1 : Game
         //    camera.Y += 10f;
         //}
         Read_input(player, grid, Block_list);
-
+        if (Keyboard.GetState().IsKeyDown(Keys.P))
+        {
+            _graphics.ToggleFullScreen();
+        }
 
         //animation stff
         float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -380,7 +390,7 @@ public class Game1 : Game
             { plr.camera.X += speed; }
 
         }
-        if (Mouse.GetState().LeftButton == ButtonState.Pressed)
+        if (Mouse.GetState().RightButton == ButtonState.Pressed)
         {
 
 
@@ -388,12 +398,16 @@ public class Game1 : Game
 
         }
 
-        if (Mouse.GetState().RightButton == ButtonState.Pressed)
+        if (Mouse.GetState().LeftButton == ButtonState.Pressed)
         {
 
 
             Minecraft.Break_block((int)x - 1, (int)y - 1, grid, list, plr);
             
+        }
+        else
+        {
+            plr.Breaking_stage = 10f;
         }
         if (Keyboard.GetState().IsKeyDown(Keys.E))
         {
@@ -410,6 +424,7 @@ public class Game1 : Game
             if (grid[(int)y - 1, (int)x - 1] != 0)
             { }
         }
+        
 
 
     }
@@ -424,11 +439,11 @@ public class Game1 : Game
         GraphicsDevice.Clear(Color.CornflowerBlue);
         for (int i = 0; i < 100; i++)
         {
-            for (int j = (int)(player.camera.X * relative_block_size) + 2; j < (int)(player.camera.X * relative_block_size) + 47; j++)
+            for (int j = (int)(player.camera.X * relative_block_size) + 2; j < (int)(player.camera.X * relative_block_size) + 100; j++)
             {
                 if (j <= 0)
                 {
-                    j = 5;
+                    j = 1;
                 }
                 if (Minecraft.Get_ByID(Background_grid[i, j], Block_list) != null)
                 {
@@ -469,7 +484,7 @@ public class Game1 : Game
         _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), player.id_copy.ToString(), new Vector2(0, 40), Backround);
         _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), Mouse.GetState().Position.ToString(), new Vector2(0, 40), Color.Red);
         _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), player.jump_val.ToString(), new Vector2(0, 60), Color.Red);
-
+        _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), player.jump_val.ToString(), new Vector2(0, 60), Color.Red);
         _spriteBatch.End();
 
         PlayerWalkRight.Scale = relative_block_size;
@@ -484,10 +499,12 @@ public class Game1 : Game
             player.player_texture.frame = 3;
 
         }
-        Vector2 NewPos = new Vector2(player.position.X, player.position.Y) + new Vector2(-0.5f, -2.8f);
+        Vector2 NewPos = new Vector2(player.position.X, player.position.Y) + new Vector2(-0.25f, -1.5f);
         _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
+        player.player_texture.Scale = 1.6f;
         // Replacing the normal SpriteBatch.Draw call to use the version from the "AnimatedTexture" class instead
         player.player_texture.DrawFrame(_spriteBatch, NewPos * new Vector2(block_gap, block_gap));
+        
         int count = 0;
         
         foreach(var b in player.Inventoy)

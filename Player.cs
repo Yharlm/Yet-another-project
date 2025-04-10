@@ -12,9 +12,9 @@ namespace Project3
     {
         public bool Back_Place = false;
         public Vector2 camera = new Vector2(0, 0);
-        public float Zoom = 1.0f;
+        public float Zoom = 2.4f;
         public int id_copy = 0;
-        public Vector2 position = new Vector2(23, 5);
+        public Vector2 position = new Vector2(20, 15);
         public float gravity = 0.1f;
         public bool is_walking = false;
         public AnimatedTexture player_texture;
@@ -22,7 +22,7 @@ namespace Project3
         public AnimatedTexture player_walkR;
         public string action = "idle";
         public bool lock_input = false;
-
+        public float Breaking_stage = 10f;
         public bool Jumped = false;
         public void jump()
         {

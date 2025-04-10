@@ -113,19 +113,31 @@ namespace Project3
         {
 
             var block = Minecraft.Get_ByID(grid[y, x], List);
-            if(block == null || block.id == 0)
+            if (player.Breaking_stage > 0)
             {
+
                 
-            }
-            else if(player.Inventoy.Contains(block))
-            {
-                player.Inventoy.Find(x => x.id == block.id).quantity += 1;
+                ;
+                
             }
             else
             {
-                player.Inventoy.Add(block);
+                
+                player.Breaking_stage = 10;
+                if (block == null || block.id == 0)
+                {
+
+                }
+                else if (player.Inventoy.Contains(block))
+                {
+                    player.Inventoy.Find(x => x.id == block.id).quantity += 1;
+                }
+                else
+                {
+                    player.Inventoy.Add(block);
+                }
+                grid[y, x] = 0;
             }
-            grid[y, x] = 0;
 
         }
         public static void Fill_Index_Cord2(int x1, int y1, int x2, int y2, int[,] grid, Block Block, int randomiser)
