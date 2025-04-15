@@ -113,11 +113,12 @@ namespace Project3
         {
 
             var block = Minecraft.Get_ByID(grid[y, x], List);
+            player.Breaking_stage -= 1 / (0.5f * block.stength );
             if (player.Breaking_stage > 0)
             {
 
                 
-                ;
+                
                 
             }
             else
@@ -139,6 +140,31 @@ namespace Project3
                 grid[y, x] = 0;
             }
 
+        }
+        public static void Place_block(int x, int y, int[,] grid, List<Block> List, Player player)
+        {
+            if(player.Inventoy.Count == 0)
+            {
+                return;
+            }
+            var block = List.Find(x => x.id == player.Inventoy[player.index-1].id);
+            if(block == null)
+            {
+                return;
+            }
+            if(player.Inventoy.Contains(block) && player.Inventoy.Find(x => x.id == block.id).quantity > 0)
+            {
+                if(grid[y, x] != 0)
+                {
+                    return;
+                }
+                grid[y, x] = block.id;
+                player.Inventoy.Find(x => x.id == block.id).quantity -= 1;
+                if(player.Inventoy.Find(x => x.id == block.id).quantity <= 0)
+                {
+                    player.Inventoy.Remove(block);
+                }
+            }
         }
         public static void Fill_Index_Cord2(int x1, int y1, int x2, int y2, int[,] grid, Block Block, int randomiser)
         {

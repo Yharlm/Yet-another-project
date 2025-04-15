@@ -54,5 +54,6 @@ namespace Project3
         
         
         public List<Block> Inventoy = new List<Block> ();
+        public int index = 1;
     }
 }

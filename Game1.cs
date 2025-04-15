@@ -250,7 +250,8 @@ public class Game1 : Game
         //}
         // TODO: use this.Content to load your game content here
     }
-
+    float index_value = 0;
+    int val_index = 0;
     protected override void Update(GameTime gameTime)
     {
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
@@ -272,6 +273,29 @@ public class Game1 : Game
         PlayerWalkRight.UpdateFrame(elapsed);
         PlayerWalkLeft.UpdateFrame(elapsed);
 
+
+
+        
+        if (Keyboard.GetState().IsKeyDown(Keys.D1))
+        {
+            index_value -= 0.1f;
+        }
+        
+        
+        if (Keyboard.GetState().IsKeyDown(Keys.D2))
+        {
+            index_value += 0.1f;
+        }
+        
+        player.index = (int)index_value;
+        if (player.index <= 1)
+        {
+            player.index = 9;
+        }
+        if (player.index >= 9)
+        {
+            player.index = 1;
+        }
         base.Update(gameTime);
     }
 
@@ -394,7 +418,7 @@ public class Game1 : Game
         {
 
 
-            grid[(int)y - 1, (int)x - 1] = plr.id_copy;
+            Minecraft.Place_block((int)x - 1, (int)y - 1, grid, list, plr);
 
         }
 
@@ -409,22 +433,9 @@ public class Game1 : Game
         {
             plr.Breaking_stage = 10f;
         }
-        if (Keyboard.GetState().IsKeyDown(Keys.E))
-        {
-
-
-
-            plr.id_copy = grid[(int)y - 1, (int)x - 1];
-        }
         
-        if (Keyboard.GetState().IsKeyDown(Keys.Q))
-        {
-
-
-            if (grid[(int)y - 1, (int)x - 1] != 0)
-            { }
-        }
         
+
 
 
     }
@@ -484,7 +495,11 @@ public class Game1 : Game
         _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), player.id_copy.ToString(), new Vector2(0, 40), Backround);
         _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), Mouse.GetState().Position.ToString(), new Vector2(0, 40), Color.Red);
         _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), player.jump_val.ToString(), new Vector2(0, 60), Color.Red);
-        _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), player.jump_val.ToString(), new Vector2(0, 60), Color.Red);
+        _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), player.Breaking_stage.ToString(), new Vector2(0, 90), Color.Red);
+        _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), player.index.ToString(), new Vector2(0, 120), Color.Red);
+        _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), gameTime.ElapsedGameTime.TotalSeconds.ToString(), new Vector2(0, 150), Color.Red);
+
+
         _spriteBatch.End();
 
         PlayerWalkRight.Scale = relative_block_size;
@@ -511,6 +526,7 @@ public class Game1 : Game
         {
             _spriteBatch.Draw(b.Texture, new Vector2(30*count,40) , null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
             _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), b.quantity.ToString(), new Vector2(30 * count, 60), Color.Wheat);
+
 
             
             count++;
