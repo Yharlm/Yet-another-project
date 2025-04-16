@@ -10,22 +10,17 @@ namespace Project3
 {
     class Minecraft
     {
+        public int[,] grid;
+        public int[,] Background;
         public List<Block> Block_list = new List<Block>();
-        public static void Fill_block(int x, int y, int[,] grid, Block Block)
-        {
-            
-            
-            
-            //WriteAt(Block.Texture, x * 2, y);
-            
-        }
-        public static void Fill_block(int x, int y, int[,] grid, int[,]Background, Block Block)
+        
+        public void Fill_block(int x, int y, Block Block)
         {
 
             if (x > 0 || y > 0)
             {
                 grid[y, x] = Block.id;
-                Background[y, x] = Block.id;
+                //Background[y, x] = Block.id;
             }
             
             //WriteAt(Block.Texture, x * 2, y);
@@ -55,7 +50,7 @@ namespace Project3
                 }
             }
         }
-        public static void Caves(int x, int y, int[,] grid)
+        public void Caves(int x, int y)
         {
             Random random = new Random();
 
@@ -70,7 +65,7 @@ namespace Project3
                     {
                         if (random.Next(0, 3) == 1 && grid[i + y, j + x] == 3)
                         {
-                            Caves(x - size / 2 + i, y - size / 2 + j, grid);
+                            Caves(x - size / 2 + i, y - size / 2 + j);
                         }
                         continue;
                     }
@@ -79,7 +74,7 @@ namespace Project3
             }
         }
 
-        public static void Caves(int x, int y, int[,] grid, Block solid, bool replace)
+        public void Caves(int x, int y, Block solid, bool replace)
         {
             Random random = new Random();
 
@@ -99,7 +94,7 @@ namespace Project3
                     {
                         if (random.Next(0, j) == 1 && grid[i + y, j + x] != id)
                         {
-                            Caves(x - size / 2 + i, y - size / 2 + j, grid);
+                            Caves(x - size / 2 + i, y - size / 2 + j);
                         }
                         continue;
                     }
@@ -109,10 +104,10 @@ namespace Project3
 
         }
 
-        public static void Break_block(int x, int y, int[,] grid, List<Block> List, Player player)
+        public void Break_block(int x, int y, Player player)
         {
 
-            var block = Minecraft.Get_ByID(grid[y, x], List);
+            var block = Get_ByID(grid[y, x]);
             player.Breaking_stage -= 1 / (0.5f * block.stength );
             if (player.Breaking_stage > 0)
             {
@@ -141,13 +136,13 @@ namespace Project3
             }
 
         }
-        public static void Place_block(int x, int y, int[,] grid, List<Block> List, Player player)
+        public void Place_block(int x, int y, Player player)
         {
             if(player.Inventoy.Count == 0)
             {
                 return;
             }
-            var block = List.Find(x => x.id == player.Inventoy[player.index-1].id);
+            var block = Block_list.Find(x => x.id == player.Inventoy[player.index-1].id);
             if(block == null)
             {
                 return;
@@ -166,7 +161,7 @@ namespace Project3
                 }
             }
         }
-        public static void Fill_Index_Cord2(int x1, int y1, int x2, int y2, int[,] grid, Block Block, int randomiser)
+        public void Fill_Index_Cord2(int x1, int y1, int x2, int y2, Block Block, int randomiser)
         {
             Random random = new Random();
             for (int j = y1; j < y2; j++)
@@ -184,11 +179,11 @@ namespace Project3
             }
 
         }
-        public static Block GetBlock(string name, List<Block> Block_list)
+        public Block GetBlock(string name)
         {
             return Block_list.Find(x => x.name == name);
         }
-        public static Block Get_ByID(int id, List<Block> Block_list)
+        public Block Get_ByID(int id)
         {
             return Block_list.Find(x => x.id == id);
         }

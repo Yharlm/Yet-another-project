@@ -11,9 +11,10 @@ namespace Project3
     internal class Structure
     {
         public int[,] Struct;
-        public void structure(object struc, int Local_x, int Local_y, int[,] grid, List<Block> list)
+        public Minecraft Minecraft;
+        public void structure(int Local_x, int Local_y)
         {
-            Structure structure = (Structure)struc;
+            
             //Block_ids block = (Block_ids)Block;
             //Solid tile = (Solid)Block;
             //int[,] str =
@@ -25,8 +26,8 @@ namespace Project3
             //    {0,0,1,0,0 }
             //};
 
-            int x = structure.Struct.GetLength(1);
-            int y = structure.Struct.GetLength(0);
+            int x = Struct.GetLength(1);
+            int y = Struct.GetLength(0);
 
 
 
@@ -35,16 +36,16 @@ namespace Project3
             {
                 for (int j = Local_x; j < Local_x + x; j++)
                 {
-                    if (structure.Struct[i - Local_y, j - Local_x] == 0)
+                    if (Struct[i - Local_y, j - Local_x] == 0)
                     {
                         continue;
                     }
-                    int ID = structure.Struct[i - Local_y, j - Local_x];
+                    int ID = Struct[i - Local_y, j - Local_x];
 
 
-                    Block block = list.Find(x => x.id == ID);
+                    Block block = Minecraft.Block_list.Find(x => x.id == ID);
                     //Minecraft.Fill_block(j, i, grid, block);
-                    grid[i,j] = ID;
+                    Minecraft.grid[i,j] = ID;
 
 
                 }
@@ -52,9 +53,9 @@ namespace Project3
 
 
         }
-        public void structure(object struc, int Local_x, int[,] grid, List<Block> list)
+        public void structure(int Local_x)
         {
-            Structure structure = (Structure)struc;
+            
             //Block_ids block = (Block_ids)Block;
             //Solid tile = (Solid)Block;
             //int[,] str =
@@ -66,11 +67,11 @@ namespace Project3
             //    {0,0,1,0,0 }
             //};
 
-            int x = structure.Struct.GetLength(1);
-            int y = structure.Struct.GetLength(0);
+            int x = Struct.GetLength(1);
+            int y = Struct.GetLength(0);
 
             int Local_y = 0;
-            while (grid[Local_y, Local_x] == 0)
+            while (Minecraft.grid[Local_y, Local_x] == 0)
             {
                 Local_y++;
             }
@@ -79,17 +80,17 @@ namespace Project3
             {
                 for (int j = Local_x; j < Local_x + x; j++)
                 {
-                    if (structure.Struct[i - Local_y, j - Local_x] == 0)
+                    if (Struct[i - Local_y, j - Local_x] == 0)
                     {
                         continue;
                     }
-                    int ID = structure.Struct[i - Local_y, j - Local_x];
+                    int ID = Struct[i - Local_y, j - Local_x];
 
 
-                    Block block = list.Find(x => x.id == structure.Struct[i - Local_y, j - Local_x]);
-                    if(i < grid.GetLength(0) && j < grid.GetLength(1))
+                    Block block = Minecraft.Block_list.Find(x => x.id == Struct[i - Local_y, j - Local_x]);
+                    if(i < Minecraft.grid.GetLength(0) && j < Minecraft.grid.GetLength(1))
                     {
-                        grid[i,j] = ID;
+                        Minecraft.grid[i,j] = ID;
                     }
                     
 

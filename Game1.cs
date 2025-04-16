@@ -44,21 +44,17 @@ public class Game1 : Game
         IsMouseVisible = true;
         PlayerWalkRight = new AnimatedTexture(Vector2.Zero, 0, 1, 0);
         PlayerWalkLeft = new AnimatedTexture(Vector2.Zero, 0, 1, 0);
+        
+
 
 
 
     }
-
-    static void Generate_terrain(int[,] grid, int[,] backrond, List<Block> list)
+    Minecraft Minecraft = new Minecraft();
+    void Generate_terrain(Minecraft Minecraft)
     {
-        //for (int i = 0; i < 500; i++)
-        //{
-        //    for (int j = 0; j < 1000; j++)
-        //    {
-
-        //        backrond[i, j] = Minecraft.GetBlock("Stone", list).id;
-        //    }
-        //}
+        
+        
         Random random = new Random();
         int Width = 1000;
         ; int Height = 45
@@ -79,18 +75,18 @@ public class Game1 : Game
             else if (c == max)
             { Height--; }
 
-            Minecraft.Fill_block(j, Height, grid, backrond, Minecraft.GetBlock("Grass_block", list));
+            Minecraft.Fill_block(j, Height, Minecraft.GetBlock("Grass_block"));
 
             int count = 1;
             while (count < dirt_Height)
             {
-                Minecraft.Fill_block(j, Height + count, grid, backrond, Minecraft.GetBlock("Dirt", list));
+                Minecraft.Fill_block(j, Height + count, Minecraft.GetBlock("Dirt"));
                 count++;
             }
 
             while (count < stone_Height)
             {
-                Minecraft.Fill_block(j, Height + count, grid, backrond, Minecraft.GetBlock("Stone", list));
+                Minecraft.Fill_block(j, Height + count, Minecraft.GetBlock("Stone"));
                 count++;
             }
             //Caves(j, random.Next(sea_level, 100), grid);
@@ -104,7 +100,7 @@ public class Game1 : Game
 
             if (random.Next(1, 30) < 4)
             {
-                Minecraft.Fill_Index_Cord2(j, Height + coalN - vein, j + vein, Height + coalN, grid, Minecraft.GetBlock("Coal_ore", list), 5);
+                Minecraft.Fill_Index_Cord2(j, Height + coalN - vein, j + vein, Height + coalN, Minecraft.GetBlock("Coal_ore"), 5);
             }
             j++;
         }
@@ -120,9 +116,9 @@ public class Game1 : Game
                 if (grid[y, j] != 0)
                 {
 
-                    Minecraft.Caves(j, y, grid, Minecraft.GetBlock("Dirt", list), false);
-                    Minecraft.Caves(j, y, grid, Minecraft.GetBlock("Iron_ore", list), false);
-                    Minecraft.Caves(j, y, grid);
+                    Minecraft.Caves(j, y, Minecraft.GetBlock("Dirt"), false);
+                    Minecraft.Caves(j, y, Minecraft.GetBlock("Iron_ore"), false);
+                    Minecraft.Caves(j, y);
 
 
                 }
@@ -137,6 +133,7 @@ public class Game1 : Game
 
 
         Structure tree = new Structure();
+        tree.Minecraft = Minecraft;
         tree.Struct = new int[,]{
                 { 0,6,6,6,0 },
                 { 0,6,7,6,0 },
@@ -153,7 +150,7 @@ public class Game1 : Game
             if (Tree_r >= tree_rate - 2)
             {
 
-                tree.structure(tree, i, grid, list);
+                tree.structure(i);
                 i += 5;
             }
 
@@ -162,7 +159,7 @@ public class Game1 : Game
 
     }
 
-    public void Create_Blocks(List<Block> Blocks)
+    public List<Block> Create_Blocks(List<Block> Blocks)
     {
         Block Template = new Block();
         Template = new Block();
@@ -220,7 +217,7 @@ public class Game1 : Game
         Blocks.Add(Template);
 
 
-
+        return Blocks;
 
     }
     protected override void Initialize()
@@ -228,6 +225,7 @@ public class Game1 : Game
         // TODO: Add your initialization logic here
         base.Initialize();
         Minecraft minecraft = new Minecraft();
+        
     }
 
     protected override void LoadContent()
@@ -239,15 +237,13 @@ public class Game1 : Game
         player.player_walkR = PlayerWalkRight;
         player.player_walkL = PlayerWalkLeft;
         _spriteBatch = new SpriteBatch(GraphicsDevice);
-        Create_Blocks(Block_list);
-        Generate_terrain(grid, Background_grid, Block_list);
-        //for (int i = 0; i < 500; i++)
-        //{
-        //    for (int j = 0; j < 1000; j++)
-        //    {
-        //        grid[i, j] = 1;
-        //    }
-        //}
+        Minecraft.grid = grid;
+        Minecraft.Background = Background_grid;
+        Minecraft.Block_list = Create_Blocks(Block_list);
+        Generate_terrain(Minecraft);
+
+
+        
         // TODO: use this.Content to load your game content here
     }
     float index_value = 0;
@@ -262,7 +258,7 @@ public class Game1 : Game
         //{
         //    camera.Y += 10f;
         //}
-        Read_input(player, grid, Block_list);
+        Read_input(player, grid);
         if (Keyboard.GetState().IsKeyDown(Keys.P))
         {
             _graphics.ToggleFullScreen();
@@ -309,7 +305,7 @@ public class Game1 : Game
         { return true; }
         return false;
     }
-    static void Read_input(Player plr, int[,] grid, List<Block> list)
+    static void Read_input(Player plr, int[,] grid)
     {
         float a = 0.1f;
         float relative_block_size = plr.Zoom;
@@ -418,7 +414,7 @@ public class Game1 : Game
         {
 
 
-            Minecraft.Place_block((int)x - 1, (int)y - 1, grid, list, plr);
+            minecraft.Place_block((int)x - 1, (int)y - 1,plr);
 
         }
 
@@ -426,7 +422,7 @@ public class Game1 : Game
         {
 
 
-            Minecraft.Break_block((int)x - 1, (int)y - 1, grid, list, plr);
+            minecraft.Break_block((int)x - 1, (int)y - 1, plr);
             
         }
         else
@@ -456,7 +452,7 @@ public class Game1 : Game
                 {
                     j = 1;
                 }
-                if (Minecraft.Get_ByID(Background_grid[i, j], Block_list) != null)
+                if (Minecraft.Get_ByID(Background_grid[i, j]) != null)
                 {
                     _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
                     _spriteBatch.Draw(Block_list.Find(x => x.id == Background_grid[i, j]).Texture, new Vector2(j * block_gap + -player.camera.X * block_gap * relative_block_size, i * block_gap + -player.camera.Y * block_gap * relative_block_size), null, Backround, 0f, Vector2.Zero, relative_block_size, SpriteEffects.None, 0f);
