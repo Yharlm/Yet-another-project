@@ -8,6 +8,7 @@ namespace Project3;
 
 public class Game1 : Game
 {
+    
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
 
@@ -50,7 +51,7 @@ public class Game1 : Game
 
 
     }
-    Minecraft Minecraft = new Minecraft();
+    
     void Generate_terrain(Minecraft Minecraft)
     {
         
@@ -158,7 +159,7 @@ public class Game1 : Game
         }
 
     }
-
+    
     public List<Block> Create_Blocks(List<Block> Blocks)
     {
         Block Template = new Block();
@@ -237,10 +238,11 @@ public class Game1 : Game
         player.player_walkR = PlayerWalkRight;
         player.player_walkL = PlayerWalkLeft;
         _spriteBatch = new SpriteBatch(GraphicsDevice);
-        Minecraft.grid = grid;
-        Minecraft.Background = Background_grid;
-        Minecraft.Block_list = Create_Blocks(Block_list);
-        Generate_terrain(Minecraft);
+        minecraft.grid = grid;
+        minecraft.Background = Background_grid;
+        minecraft.Block_list = Create_Blocks(Block_list);
+        Generate_terrain(minecraft);
+        
 
 
         
@@ -258,7 +260,7 @@ public class Game1 : Game
         //{
         //    camera.Y += 10f;
         //}
-        Read_input(player, grid);
+        Read_input(player, grid,minecraft);
         if (Keyboard.GetState().IsKeyDown(Keys.P))
         {
             _graphics.ToggleFullScreen();
@@ -269,14 +271,23 @@ public class Game1 : Game
         PlayerWalkRight.UpdateFrame(elapsed);
         PlayerWalkLeft.UpdateFrame(elapsed);
 
-
+        foreach(Entity mob in minecraft.Existing_entities)
+        {
+            if (mob != null)
+            {
+                mob.Velocity.Apply_Velocity();
+            }
+            
+        }
 
         
         if (Keyboard.GetState().IsKeyDown(Keys.D1))
         {
             index_value -= 0.1f;
+
         }
         
+
         
         if (Keyboard.GetState().IsKeyDown(Keys.D2))
         {
@@ -305,7 +316,7 @@ public class Game1 : Game
         { return true; }
         return false;
     }
-    static void Read_input(Player plr, int[,] grid)
+    static void Read_input(Player plr, int[,] grid,Minecraft minecraft)
     {
         float a = 0.1f;
         float relative_block_size = plr.Zoom;
@@ -400,7 +411,7 @@ public class Game1 : Game
         if (Keyboard.GetState().IsKeyDown(Keys.D))
         {
 
-
+            
             plr.is_walking = true;
             plr.player_texture = plr.player_walkR;
             if (
@@ -420,7 +431,7 @@ public class Game1 : Game
 
         if (Mouse.GetState().LeftButton == ButtonState.Pressed)
         {
-
+            minecraft.spawn_ent("Dirt");
 
             minecraft.Break_block((int)x - 1, (int)y - 1, plr);
             
@@ -452,7 +463,7 @@ public class Game1 : Game
                 {
                     j = 1;
                 }
-                if (Minecraft.Get_ByID(Background_grid[i, j]) != null)
+                if (minecraft.Get_ByID(Background_grid[i, j]) != null)
                 {
                     _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
                     _spriteBatch.Draw(Block_list.Find(x => x.id == Background_grid[i, j]).Texture, new Vector2(j * block_gap + -player.camera.X * block_gap * relative_block_size, i * block_gap + -player.camera.Y * block_gap * relative_block_size), null, Backround, 0f, Vector2.Zero, relative_block_size, SpriteEffects.None, 0f);
@@ -495,6 +506,11 @@ public class Game1 : Game
         _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), player.index.ToString(), new Vector2(0, 120), Color.Red);
         _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), gameTime.ElapsedGameTime.TotalSeconds.ToString(), new Vector2(0, 150), Color.Red);
 
+        foreach(Entity mob in minecraft.Existing_entities)
+        {
+            _spriteBatch.Draw(Block_list[2].Texture, new Vector2(block_gap + -player.camera.X * block_gap * relative_block_size, block_gap + -player.camera.Y * block_gap * relative_block_size), null, Color.LawnGreen, 0f, Vector2.Zero, relative_block_size, SpriteEffects.None, 0f);
+
+        }
 
         _spriteBatch.End();
 

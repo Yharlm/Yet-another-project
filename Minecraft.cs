@@ -13,7 +13,15 @@ namespace Project3
         public int[,] grid;
         public int[,] Background;
         public List<Block> Block_list = new List<Block>();
-        
+        public List<Entity> Entities = new List<Entity>();
+        public List <Entity> Existing_entities = new List<Entity>();
+
+        public void spawn_ent(string name)
+        {
+            Entity entity = Entities.Find(x => x.name == name);
+            Existing_entities.Add(entity);
+
+        }
         public void Fill_block(int x, int y, Block Block)
         {
 
@@ -130,6 +138,7 @@ namespace Project3
                 }
                 else
                 {
+                    block.quantity = 1;
                     player.Inventoy.Add(block);
                 }
                 grid[y, x] = 0;
