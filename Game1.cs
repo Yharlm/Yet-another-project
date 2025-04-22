@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Project3;
 
@@ -241,11 +242,12 @@ public class Game1 : Game
         minecraft.grid = grid;
         minecraft.Background = Background_grid;
         minecraft.Block_list = Create_Blocks(Block_list);
+        minecraft.Entities = Entity.Load_Mobs();
         Generate_terrain(minecraft);
         
 
 
-        
+
         // TODO: use this.Content to load your game content here
     }
     float index_value = 0;
@@ -275,10 +277,14 @@ public class Game1 : Game
         {
             if (mob != null)
             {
-                mob.Velocity.Apply_Velocity();
+                mob.Apply_Velocity();
+                //mob.Position += mob.Velocity.current_velocity;
+                //mob.Position.Y += 0.01f;
             }
             
         }
+
+        
 
         
         if (Keyboard.GetState().IsKeyDown(Keys.D1))
@@ -291,6 +297,7 @@ public class Game1 : Game
         
         if (Keyboard.GetState().IsKeyDown(Keys.D2))
         {
+            minecraft.Existing_entities.Count();
             index_value += 0.1f;
         }
         
@@ -325,6 +332,7 @@ public class Game1 : Game
         Vector2 mousepos = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
         double x = Math.Ceiling((double)mousepos.X / block_gap + plr.camera.X * relative_block_size);
         double y = Math.Ceiling((double)mousepos.Y / block_gap + plr.camera.Y * relative_block_size);
+        System.Numerics.Vector2 Cursor_toWorld = new System.Numerics.Vector2((float)(double)mousepos.X / block_gap + plr.camera.X * relative_block_size, (float)(double)mousepos.Y / block_gap + plr.camera.Y * relative_block_size);
 
 
         if (plr.Jumped)
@@ -431,8 +439,8 @@ public class Game1 : Game
 
         if (Mouse.GetState().LeftButton == ButtonState.Pressed)
         {
-            minecraft.spawn_ent("Dirt");
-
+            minecraft.spawn_ent("Dirt",Cursor_toWorld);
+            
             minecraft.Break_block((int)x - 1, (int)y - 1, plr);
             
         }
@@ -508,8 +516,8 @@ public class Game1 : Game
 
         foreach(Entity mob in minecraft.Existing_entities)
         {
-            _spriteBatch.Draw(Block_list[2].Texture, new Vector2(block_gap + -player.camera.X * block_gap * relative_block_size, block_gap + -player.camera.Y * block_gap * relative_block_size), null, Color.LawnGreen, 0f, Vector2.Zero, relative_block_size, SpriteEffects.None, 0f);
-
+            _spriteBatch.Draw(Content.Load<Texture2D>("dirt"), new Vector2(mob.Position.X * block_gap + -player.camera.X * block_gap * relative_block_size, mob.Position.Y * block_gap + -player.camera.Y * block_gap * relative_block_size), null, Color.LawnGreen, 0f, Vector2.Zero, relative_block_size, SpriteEffects.None, 0f);
+            _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), mob.Position.ToString(), new Vector2(0, 120), Color.Red);
         }
 
         _spriteBatch.End();

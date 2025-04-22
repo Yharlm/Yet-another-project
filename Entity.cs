@@ -10,22 +10,18 @@ namespace Project3
 {
     class Velocity : Entity
     {
-        public Vector2 current_velocity = new Vector2(0, 20);
+        public Vector2 current_velocity = new Vector2(0, 0.1f);
 
-        public void Apply_Velocity()
-        {
-
-            Position += current_velocity;
-        }
+        
 
         public void Add_velocity(Vector2 Force) 
         {
             current_velocity = Force;
         }
     }
-    internal class Entity : Game1
+    class Entity
     {
-        public Velocity Velocity = new Velocity();
+        public Velocity Velocity;
         public Vector2 Position;
         public float rotation;
         public float health;
@@ -33,19 +29,42 @@ namespace Project3
         public Texture2D Texture;
         public float scale;
         public string name;
-        public List<Entity> Load_Mobs()
+        public static List<Entity> Load_Mobs()
         {
             List<Entity> list = new List<Entity>();
             Entity mob = new Entity();
-
-            mob.Position = player.position;
+            mob.Velocity = new Velocity();
+            
             mob.name = "Dirt";
+            
             mob.ID = 1;
             mob.scale = 6;
             mob.rotation = 0;
             mob.health = 10;
             list.Add(mob);
             return list;
+
+        }
+        public void Apply_Velocity()
+        {
+            
+            Position += Velocity.current_velocity/10;
+            if(Velocity.current_velocity.Y < 0)
+            {
+                Velocity.current_velocity.Y += 1f;
+            }
+            else if (Velocity.current_velocity.Y > 0)
+            {
+                Velocity.current_velocity.Y -= 1f;
+            }
+            //if (Velocity.current_velocity.X > 0.1)
+            //{
+            //    Velocity.current_velocity.X += 0.1f;
+            //}
+            //else
+            //{
+            //    Velocity.current_velocity.X -= 0.1f;
+            //}
 
         }
 

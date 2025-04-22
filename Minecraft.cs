@@ -16,10 +16,18 @@ namespace Project3
         public List<Entity> Entities = new List<Entity>();
         public List <Entity> Existing_entities = new List<Entity>();
 
-        public void spawn_ent(string name)
+        public void spawn_ent(string name,System.Numerics.Vector2 pos)
         {
+            Entity mob = new Entity();
             Entity entity = Entities.Find(x => x.name == name);
-            Existing_entities.Add(entity);
+            mob.health = 0;
+            mob.Position = pos;
+            mob.name = entity.name;
+            
+            mob.Velocity = new Velocity();
+            Existing_entities.Add(mob);
+            Existing_entities.Last().Position = pos;
+            
 
         }
         public void Fill_block(int x, int y, Block Block)
