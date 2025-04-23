@@ -275,6 +275,27 @@ public class Game1 : Game
 
         foreach(Entity mob in minecraft.Existing_entities)
         {
+            mob.collision.Left = false;
+            mob.collision.Right = false;
+            mob.collision.Top = false;
+            mob.collision.Bootom = false;
+            if (Entity.CheckVertice(new System.Numerics.Vector2(0, 0.5f),mob, player, block_gap, relative_block_size, grid))
+            {
+                mob.collision.Left = true;
+            }
+            if (Entity.CheckVertice(new System.Numerics.Vector2(0.5f, 0), mob, player, block_gap, relative_block_size, grid))
+            {
+                mob.collision.Top = true;
+            }
+            if (Entity.CheckVertice(new System.Numerics.Vector2(1, 0.5f), mob, player, block_gap, relative_block_size, grid))
+            {
+                mob.collision.Right = true;
+            }
+            if (Entity.CheckVertice(new System.Numerics.Vector2(0.5f, 1), mob, player, block_gap, relative_block_size, grid))
+            {
+                mob.collision.Bootom = true;
+            }
+            Entity.TestCheckVertice(new System.Numerics.Vector2(0, 0.5f), mob, player, block_gap, relative_block_size, grid);
             if (mob != null)
             {
                 mob.Apply_Velocity();
@@ -282,6 +303,8 @@ public class Game1 : Game
                 //mob.Position.Y += 0.01f;
             }
             
+
+
         }
 
         
@@ -313,7 +336,7 @@ public class Game1 : Game
         base.Update(gameTime);
     }
 
-    static bool CheckVertice(Vector2 Offset, Player plr, float block_gap, float relative_block_size, int[,] grid)
+    public static bool CheckVertice(Vector2 Offset, Player plr, float block_gap, float relative_block_size, int[,] grid)
     {
         Vector2 mousepos = (plr.position + Offset) * new Vector2(block_gap, block_gap);
         double x = Math.Ceiling((double)mousepos.X / block_gap + plr.camera.X * relative_block_size);
@@ -323,6 +346,8 @@ public class Game1 : Game
         { return true; }
         return false;
     }
+    
+
     static void Read_input(Player plr, int[,] grid,Minecraft minecraft)
     {
         float a = 0.1f;
@@ -517,9 +542,12 @@ public class Game1 : Game
         foreach(Entity mob in minecraft.Existing_entities)
         {
             _spriteBatch.Draw(Content.Load<Texture2D>("dirt"), new Vector2(mob.Position.X * block_gap + -player.camera.X * block_gap * relative_block_size, mob.Position.Y * block_gap + -player.camera.Y * block_gap * relative_block_size), null, Color.LawnGreen, 0f, Vector2.Zero, relative_block_size, SpriteEffects.None, 0f);
-            _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), mob.Position.ToString(), new Vector2(0, 120), Color.Red);
+            
         }
-
+        if(minecraft.Existing_entities.Count > 0)
+        {
+            _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), minecraft.Existing_entities.Last().collision.Bootom.ToString(), new Vector2(0, 120), Color.Red);
+        }
         _spriteBatch.End();
 
         PlayerWalkRight.Scale = relative_block_size;
@@ -547,6 +575,7 @@ public class Game1 : Game
             _spriteBatch.Draw(b.Texture, new Vector2(30*count,40) , null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
             _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), b.quantity.ToString(), new Vector2(30 * count, 60), Color.Wheat);
 
+            
 
             
             count++;
