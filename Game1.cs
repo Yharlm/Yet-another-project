@@ -252,6 +252,7 @@ public class Game1 : Game
     }
     float index_value = 0;
     int val_index = 0;
+    float spawn_delay = 0f;
     protected override void Update(GameTime gameTime)
     {
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
@@ -275,27 +276,29 @@ public class Game1 : Game
 
         foreach(Entity mob in minecraft.Existing_entities)
         {
-            mob.collision.Left = false;
-            mob.collision.Right = false;
-            mob.collision.Top = false;
-            mob.collision.Bootom = false;
-            if (Entity.CheckVertice(new System.Numerics.Vector2(0, 0.5f),mob, player, block_gap, relative_block_size, grid))
+            //mob.collision.Left = false;
+            //mob.collision.Right = false;
+            //mob.collision.Top = false;
+            //mob.collision.Bootom = false;
+
+            if (!Entity.CheckVertice(new System.Numerics.Vector2(0, 0.5f), mob, player, block_gap, relative_block_size, grid))
             {
                 mob.collision.Left = true;
             }
-            if (Entity.CheckVertice(new System.Numerics.Vector2(0.5f, 0), mob, player, block_gap, relative_block_size, grid))
+            if (!Entity.CheckVertice(new System.Numerics.Vector2(0.5f, 0), mob, player, block_gap, relative_block_size, grid))
             {
                 mob.collision.Top = true;
             }
-            if (Entity.CheckVertice(new System.Numerics.Vector2(1, 0.5f), mob, player, block_gap, relative_block_size, grid))
+            if (!Entity.CheckVertice(new System.Numerics.Vector2(1, 0.5f), mob, player, block_gap, relative_block_size, grid))
             {
                 mob.collision.Right = true;
             }
-            if (Entity.CheckVertice(new System.Numerics.Vector2(0.5f, 1), mob, player, block_gap, relative_block_size, grid))
+            if (!Entity.CheckVertice(new System.Numerics.Vector2(0.5f, 1), mob, player, block_gap, relative_block_size, grid))
             {
                 mob.collision.Bootom = true;
             }
-            Entity.TestCheckVertice(new System.Numerics.Vector2(0, 0.5f), mob, player, block_gap, relative_block_size, grid);
+
+            //Entity.TestCheckVertice(new System.Numerics.Vector2(0, 0.5f), mob, player, block_gap, relative_block_size, grid);
             if (mob != null)
             {
                 mob.Apply_Velocity();
@@ -444,7 +447,6 @@ public class Game1 : Game
         if (Keyboard.GetState().IsKeyDown(Keys.D))
         {
 
-            
             plr.is_walking = true;
             plr.player_texture = plr.player_walkR;
             if (
@@ -452,6 +454,12 @@ public class Game1 : Game
                 , plr, block_gap, relative_block_size, grid))
 
             { plr.camera.X += speed; }
+
+        }
+        if (Keyboard.GetState().IsKeyDown(Keys.E))
+        {
+
+            minecraft.spawn_ent("Dirt",Cursor_toWorld);
 
         }
         if (Mouse.GetState().RightButton == ButtonState.Pressed)
@@ -464,10 +472,9 @@ public class Game1 : Game
 
         if (Mouse.GetState().LeftButton == ButtonState.Pressed)
         {
-            minecraft.spawn_ent("Dirt",Cursor_toWorld);
-            
+
             minecraft.Break_block((int)x - 1, (int)y - 1, plr);
-            
+
         }
         else
         {
@@ -542,9 +549,10 @@ public class Game1 : Game
         foreach(Entity mob in minecraft.Existing_entities)
         {
             _spriteBatch.Draw(Content.Load<Texture2D>("dirt"), new Vector2(mob.Position.X * block_gap + -player.camera.X * block_gap * relative_block_size, mob.Position.Y * block_gap + -player.camera.Y * block_gap * relative_block_size), null, Color.LawnGreen, 0f, Vector2.Zero, relative_block_size, SpriteEffects.None, 0f);
-            
+            _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), mob.collision.Bootom.ToString(), new Vector2(mob.Position.X * block_gap + -player.camera.X * block_gap * relative_block_size, mob.Position.Y * block_gap + -player.camera.Y * block_gap * relative_block_size), Color.Wheat);
+
         }
-        if(minecraft.Existing_entities.Count > 0)
+        if (minecraft.Existing_entities.Count > 0)
         {
             _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), minecraft.Existing_entities.Last().collision.Bootom.ToString(), new Vector2(0, 120), Color.Red);
         }

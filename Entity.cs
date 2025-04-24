@@ -18,10 +18,10 @@ namespace Project3
 
     }
 
-    class Velocity : Entity
+    class Velocity
     {
-        public Vector2 current_velocity = new Vector2(0, 0f);
-
+        public Vector2 current_velocity = new Vector2(4,  1f);
+        public float Drag = 0.1f;
         
 
         public void Add_velocity(Vector2 Force) 
@@ -60,10 +60,14 @@ namespace Project3
         public static bool CheckVertice(Vector2 Offset, Entity Mob,Player plr, float block_gap, float relative_block_size, int[,] grid)
         {
             Vector2 mousepos = (Mob.Position + Offset);
-            double x = Math.Ceiling((double)mousepos.X / block_gap + Mob.Position.X * relative_block_size);
-            double y = Math.Ceiling((double)mousepos.Y / block_gap + Mob.Position.Y * relative_block_size);
+            double x = Math.Ceiling((double)mousepos.X / block_gap * relative_block_size);
+            double y = Math.Ceiling((double)mousepos.Y / block_gap * relative_block_size);
 
-            if (grid[(int)y - 1, (int)x - 1] == 0)
+            if(mousepos.X <= 0 || mousepos.Y <= 0)
+            {
+                return false;
+            }
+            if (grid[(int)mousepos.Y, (int)mousepos.X] == 0)
             { return true; }
             return false;
         }
@@ -82,26 +86,30 @@ namespace Project3
             
             if (Velocity.current_velocity.Y < 0 && !Box.Bootom)
             {
-                Position.Y += 0.2f;
-                Velocity.current_velocity.Y += 0.2f;
-            }
-            else if (Velocity.current_velocity.Y < 0 && Box.Bootom)
-            {
-                Position.Y += 0.2f;
-                Velocity.current_velocity.Y += 0.2f;
-            }
-            else if (Velocity.current_velocity.Y > 0 && Box.Bootom)
-            {
-                Position.Y -= 0.2f;
-                Velocity.current_velocity.Y -= 0.2f;
-            }
-            else if (Velocity.current_velocity.Y > 0 && !Box.Top)
-            {
-                Position.Y -= 0.2f;
-                Velocity.current_velocity.Y -= 0.2f;
+                Position.Y += Velocity.current_velocity.Y/ Velocity.Drag;
+                //Velocity.current_velocity.Y += 0.2f;
             }
 
-            
+            else if (Velocity.current_velocity.Y > 0 && !Box.Top)
+            {
+                Position.Y += Velocity.current_velocity.Y/ Velocity.Drag;
+                //Velocity.current_velocity.Y -= 0.2f;
+            }
+
+            if (Velocity.current_velocity.X < 0 && !Box.Right)
+            {
+                Position.X += Velocity.current_velocity.X / Velocity.Drag;
+                //Velocity.current_velocity.X += 0.2f;
+            }
+
+            else if (Velocity.current_velocity.X > 0 && !Box.Left)
+            {
+                Position.X += Velocity.current_velocity.X / Velocity.Drag;
+                //Velocity.current_velocity.X -= 0.2f;
+            }
+
+
+
 
         }
 
