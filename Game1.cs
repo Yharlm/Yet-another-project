@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+
 namespace Project3;
 
 public class Game1 : Game
@@ -23,7 +24,7 @@ public class Game1 : Game
     public Vector2 mousepos;
     public AnimatedTexture PlayerWalkRight;
     public AnimatedTexture PlayerWalkLeft;
-
+    public List<Button> Button_list = new List<Button>();
 
 
 
@@ -38,6 +39,7 @@ public class Game1 : Game
 
     public Game1()
     {
+
         _graphics = new GraphicsDeviceManager(this);
         _graphics.PreferredBackBufferWidth = 1540;
         _graphics.PreferredBackBufferHeight = 1080;
@@ -46,7 +48,16 @@ public class Game1 : Game
         IsMouseVisible = true;
         PlayerWalkRight = new AnimatedTexture(Vector2.Zero, 0, 1, 0);
         PlayerWalkLeft = new AnimatedTexture(Vector2.Zero, 0, 1, 0);
-        
+
+
+
+        Button Spawn = new Button()
+        {
+            text = "Press me",
+            font = Content.Load<SpriteFont>("text1"),
+            
+        };
+
 
 
 
@@ -293,7 +304,7 @@ public class Game1 : Game
             {
                 mob.collision.Right = true;
             }
-            if (!Entity.CheckVertice(new System.Numerics.Vector2(0.5f, 1), mob, player, block_gap, relative_block_size, grid))
+            if (!Entity.CheckVertice(new System.Numerics.Vector2(0.5f, 1f), mob, player, block_gap, relative_block_size, grid))
             {
                 mob.collision.Bootom = true;
             }
@@ -459,7 +470,7 @@ public class Game1 : Game
         if (Keyboard.GetState().IsKeyDown(Keys.E))
         {
 
-            minecraft.spawn_ent("Dirt",Cursor_toWorld);
+            minecraft.spawn_ent("Dirt", Cursor_toWorld);
 
         }
         if (Mouse.GetState().RightButton == ButtonState.Pressed)
@@ -590,6 +601,7 @@ public class Game1 : Game
 
         }
         _spriteBatch.End();
+        foreach(var button in )
 
 
         base.Draw(gameTime);

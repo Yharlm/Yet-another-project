@@ -20,7 +20,7 @@ namespace Project3
 
     class Velocity
     {
-        public Vector2 current_velocity = new Vector2(4,  1f);
+        public Vector2 current_velocity = new Vector2(0,1f);
         public float Drag = 0.1f;
         
 
@@ -84,29 +84,29 @@ namespace Project3
         {
             var Box = collision;
             
-            if (Velocity.current_velocity.Y < 0 && !Box.Bootom)
+            if (Velocity.current_velocity.Y > 0 && !Box.Bootom)
             {
-                Position.Y += Velocity.current_velocity.Y/ Velocity.Drag;
+                Position.Y += Velocity.current_velocity.Y* Velocity.Drag;
                 //Velocity.current_velocity.Y += 0.2f;
             }
 
-            else if (Velocity.current_velocity.Y > 0 && !Box.Top)
-            {
-                Position.Y += Velocity.current_velocity.Y/ Velocity.Drag;
-                //Velocity.current_velocity.Y -= 0.2f;
-            }
+            //else if (Velocity.current_velocity.Y > 0 && !Box.Top)
+            //{
+            //    Position.Y += Velocity.current_velocity.Y* Velocity.Drag;
+            //    //Velocity.current_velocity.Y -= 0.2f;
+            //}
 
-            if (Velocity.current_velocity.X < 0 && !Box.Right)
-            {
-                Position.X += Velocity.current_velocity.X / Velocity.Drag;
-                //Velocity.current_velocity.X += 0.2f;
-            }
+            //if (Velocity.current_velocity.X < 0 && !Box.Right)
+            //{
+            //    Position.X += Velocity.current_velocity.X * Velocity.Drag;
+            //    //Velocity.current_velocity.X += 0.2f;
+            //}
 
-            else if (Velocity.current_velocity.X > 0 && !Box.Left)
-            {
-                Position.X += Velocity.current_velocity.X / Velocity.Drag;
-                //Velocity.current_velocity.X -= 0.2f;
-            }
+            //else if (Velocity.current_velocity.X > 0 && !Box.Left)
+            //{
+            //    Position.X += Velocity.current_velocity.X * Velocity.Drag;
+            //    //Velocity.current_velocity.X -= 0.2f;
+            //}
 
 
 

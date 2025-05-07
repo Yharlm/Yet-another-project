@@ -56,16 +56,7 @@ namespace Project3
         public void structure(int Local_x)
         {
             
-            //Block_ids block = (Block_ids)Block;
-            //Solid tile = (Solid)Block;
-            //int[,] str =
-            //{
-            //    {0,0,1,0,0 },
-            //    {0,0,1,0,0 },
-            //    {0,1,1,0,0 },
-            //    {0,0,1,0,0 },
-            //    {0,0,1,0,0 }
-            //};
+            
 
             int x = Struct.GetLength(1);
             int y = Struct.GetLength(0);
