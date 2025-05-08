@@ -4,6 +4,8 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Vector2 = System.Numerics.Vector2;
+using Color = Microsoft.Xna.Framework.Color;
 
 
 namespace Project3;
@@ -239,6 +241,7 @@ public class Game1 : Game
         base.Initialize();
         Minecraft minecraft = new Minecraft();
         
+        
     }
 
     protected override void LoadContent()
@@ -255,7 +258,12 @@ public class Game1 : Game
         minecraft.Block_list = Create_Blocks(Block_list);
         minecraft.Entities = Entity.Load_Mobs();
         Generate_terrain(minecraft);
-        
+
+
+        Button Crafting = new Button();
+        Crafting.position = new Vector2(40, 350);
+        Crafting.scale = new Vector2(3,3);
+        Button_list.Add(Crafting);
 
 
 
@@ -362,7 +370,7 @@ public class Game1 : Game
     }
     
 
-    static void Read_input(Player plr, int[,] grid,Minecraft minecraft)
+    void Read_input(Player plr, int[,] grid,Minecraft minecraft)
     {
         float a = 0.1f;
         float relative_block_size = plr.Zoom;
@@ -372,6 +380,23 @@ public class Game1 : Game
         double x = Math.Ceiling((double)mousepos.X / block_gap + plr.camera.X * relative_block_size);
         double y = Math.Ceiling((double)mousepos.Y / block_gap + plr.camera.Y * relative_block_size);
         System.Numerics.Vector2 Cursor_toWorld = new System.Numerics.Vector2((float)(double)mousepos.X / block_gap + plr.camera.X * relative_block_size, (float)(double)mousepos.Y / block_gap + plr.camera.Y * relative_block_size);
+        foreach (Button button in Button_list)
+        {
+            if (mousepos.X > button.position.X && mousepos.X < button.position.X + button.scale.X * 10 && mousepos.Y > button.position.Y && mousepos.Y < button.position.Y + button.scale.Y * 10)
+            {
+                button.color = Color.Gold;
+                if (Mouse.GetState().LeftButton == ButtonState.Pressed)
+                {
+                    
+                    
+                }
+                continue;
+            }
+            else
+            {
+                button.color = Color.White;
+            }
+        }
 
 
         if (plr.Jumped)
@@ -601,7 +626,13 @@ public class Game1 : Game
 
         }
         _spriteBatch.End();
-        foreach(var button in )
+        foreach(var button in Button_list)
+        {
+            _spriteBatch.Begin(samplerState:SamplerState.PointClamp);
+            _spriteBatch.Draw(Content.Load<Texture2D>("crafting_table_front"), button.position, null, button.color, 0f, Vector2.One,button.scale, SpriteEffects.None, 1f);
+            _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), button.text, button.position, Microsoft.Xna.Framework.Color.White,0f,Vector2.Zero,new Vector2(1,1),SpriteEffects.None,1f);
+            _spriteBatch.End();
+        }
 
 
         base.Draw(gameTime);
