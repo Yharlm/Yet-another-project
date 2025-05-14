@@ -30,6 +30,20 @@ namespace Project3
             
 
         }
+        public void spawn_ent(Entity mob)
+        {
+            
+            Entity entity = new Entity();
+            entity.health = 0;
+            entity.Position = mob.Position;
+            entity.name = mob.name;
+            entity.scale = mob.scale;
+            entity.Velocity = mob.Velocity;
+            Existing_entities.Add(entity);
+            Existing_entities.Last().Position = mob.Position;
+
+
+        }
         public void Fill_block(int x, int y, Block Block)
         {
 

@@ -21,4 +21,11 @@ namespace Project3
         public bool apaque = false;
 
     }
+
+    public class Rescipe
+    {
+        public Block Item;
+        public int Quantities;
+        
+    }
 }

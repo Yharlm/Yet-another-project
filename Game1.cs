@@ -4,15 +4,15 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Vector2 = System.Numerics.Vector2;
 using Color = Microsoft.Xna.Framework.Color;
+using Vector2 = System.Numerics.Vector2;
 
 
 namespace Project3;
 
 public class Game1 : Game
 {
-    
+
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
 
@@ -27,8 +27,8 @@ public class Game1 : Game
     public AnimatedTexture PlayerWalkRight;
     public AnimatedTexture PlayerWalkLeft;
     public List<Button> Button_list = new List<Button>();
-
-
+    //public crafting_list
+    public Button[] inventory = new Button[9];
 
 
 
@@ -57,7 +57,7 @@ public class Game1 : Game
         {
             text = "Press me",
             font = Content.Load<SpriteFont>("text1"),
-            
+
         };
 
 
@@ -65,11 +65,11 @@ public class Game1 : Game
 
 
     }
-    
+
     void Generate_terrain(Minecraft Minecraft)
     {
-        
-        
+
+
         Random random = new Random();
         int Width = 1000;
         ; int Height = 45
@@ -173,7 +173,7 @@ public class Game1 : Game
         }
 
     }
-    
+
     public List<Block> Create_Blocks(List<Block> Blocks)
     {
         Block Template = new Block();
@@ -240,8 +240,8 @@ public class Game1 : Game
         // TODO: Add your initialization logic here
         base.Initialize();
         Minecraft minecraft = new Minecraft();
-        
-        
+
+
     }
 
     protected override void LoadContent()
@@ -261,8 +261,9 @@ public class Game1 : Game
 
 
         Button Crafting = new Button();
+        Crafting.text = "";
         Crafting.position = new Vector2(40, 350);
-        Crafting.scale = new Vector2(3,3);
+        Crafting.scale = new Vector2(3, 3);
         Button_list.Add(Crafting);
 
 
@@ -282,7 +283,7 @@ public class Game1 : Game
         //{
         //    camera.Y += 10f;
         //}
-        Read_input(player, grid,minecraft);
+        Read_input(player, grid, minecraft);
         if (Keyboard.GetState().IsKeyDown(Keys.P))
         {
             _graphics.ToggleFullScreen();
@@ -293,7 +294,7 @@ public class Game1 : Game
         PlayerWalkRight.UpdateFrame(elapsed);
         PlayerWalkLeft.UpdateFrame(elapsed);
 
-        foreach(Entity mob in minecraft.Existing_entities)
+        foreach (Entity mob in minecraft.Existing_entities)
         {
             //mob.collision.Left = false;
             //mob.collision.Right = false;
@@ -324,28 +325,28 @@ public class Game1 : Game
                 //mob.Position += mob.Velocity.current_velocity;
                 //mob.Position.Y += 0.01f;
             }
-            
+
 
 
         }
 
-        
 
-        
+
+
         if (Keyboard.GetState().IsKeyDown(Keys.D1))
         {
             index_value -= 0.1f;
 
         }
-        
 
-        
+
+
         if (Keyboard.GetState().IsKeyDown(Keys.D2))
         {
-            minecraft.Existing_entities.Count();
+
             index_value += 0.1f;
         }
-        
+
         player.index = (int)index_value;
         if (player.index <= 1)
         {
@@ -368,9 +369,9 @@ public class Game1 : Game
         { return true; }
         return false;
     }
-    
 
-    void Read_input(Player plr, int[,] grid,Minecraft minecraft)
+
+    void Read_input(Player plr, int[,] grid, Minecraft minecraft)
     {
         float a = 0.1f;
         float relative_block_size = plr.Zoom;
@@ -387,8 +388,8 @@ public class Game1 : Game
                 button.color = Color.Gold;
                 if (Mouse.GetState().LeftButton == ButtonState.Pressed)
                 {
-                    
-                    
+
+
                 }
                 continue;
             }
@@ -403,18 +404,18 @@ public class Game1 : Game
         {
             if (CheckVertice(new Vector2(0.5f, 1), plr, block_gap, relative_block_size, grid) == false) // returns true if theres nothing under player
             {
-                
+
                 plr.jump_val = 1;
                 plr.Jumped = false;
                 plr.has_jumped = false;
                 plr.is_falling_fast = false;
             }
-            if(CheckVertice(new Vector2(0.5f, -1.21f), plr, block_gap, relative_block_size, grid) == false)
+            if (CheckVertice(new Vector2(0.5f, -1.21f), plr, block_gap, relative_block_size, grid) == false)
             {
-                
+
                 plr.is_falling_fast = true;
             }
-            plr.jump();    
+            plr.jump();
 
         }
         plr.is_walking = false;
@@ -430,7 +431,7 @@ public class Game1 : Game
         }
 
 
-        
+
 
         if (Keyboard.GetState().IsKeyDown(Keys.W) || Keyboard.GetState().IsKeyDown(Keys.Space))
         {
@@ -502,7 +503,7 @@ public class Game1 : Game
         {
 
 
-            minecraft.Place_block((int)x - 1, (int)y - 1,plr);
+            minecraft.Place_block((int)x - 1, (int)y - 1, plr);
 
         }
 
@@ -516,12 +517,25 @@ public class Game1 : Game
         {
             plr.Breaking_stage = 10f;
         }
-        
-        
+        if (Keyboard.GetState().IsKeyDown(Keys.R))
+        {
+
+            cooldown -= 0.1f
+                ; if (cooldown <= 0)
+            {
+                minecraft.spawn_ent("Dirt", player.position + player.camera * player.Zoom);
+                minecraft.Existing_entities.Last().scale = 1f;
+                minecraft.Existing_entities.Last().Velocity.Add_velocity(Vector2.Normalize(mousepos - new Vector2(777, 555)));
+                cooldown = 3;
+            }
+
+
+        }
 
 
 
     }
+    public float cooldown = 3;
     public float relative_block_size;
     public float block_gap;
     protected override void Draw(GameTime gameTime)
@@ -582,7 +596,7 @@ public class Game1 : Game
         _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), player.index.ToString(), new Vector2(0, 120), Color.Red);
         _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), gameTime.ElapsedGameTime.TotalSeconds.ToString(), new Vector2(0, 150), Color.Red);
 
-        foreach(Entity mob in minecraft.Existing_entities)
+        foreach (Entity mob in minecraft.Existing_entities)
         {
             _spriteBatch.Draw(Content.Load<Texture2D>("dirt"), new Vector2(mob.Position.X * block_gap + -player.camera.X * block_gap * relative_block_size, mob.Position.Y * block_gap + -player.camera.Y * block_gap * relative_block_size), null, Color.LawnGreen, 0f, Vector2.Zero, relative_block_size, SpriteEffects.None, 0f);
             _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), mob.collision.Bootom.ToString(), new Vector2(mob.Position.X * block_gap + -player.camera.X * block_gap * relative_block_size, mob.Position.Y * block_gap + -player.camera.Y * block_gap * relative_block_size), Color.Wheat);
@@ -611,27 +625,37 @@ public class Game1 : Game
         player.player_texture.Scale = 1.6f;
         // Replacing the normal SpriteBatch.Draw call to use the version from the "AnimatedTexture" class instead
         player.player_texture.DrawFrame(_spriteBatch, NewPos * new Vector2(block_gap, block_gap));
-        
+
         int count = 0;
-        
-        foreach(var b in player.Inventoy)
+
+        foreach (var b in player.Inventoy)
         {
-            _spriteBatch.Draw(b.Texture, new Vector2(30*count,40) , null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+            _spriteBatch.Draw(b.Texture, new Vector2(30 * count, 40), null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
             _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), b.quantity.ToString(), new Vector2(30 * count, 60), Color.Wheat);
 
-            
 
-            
+
+
             count++;
 
         }
         _spriteBatch.End();
-        foreach(var button in Button_list)
+        foreach (var button in Button_list)
         {
-            _spriteBatch.Begin(samplerState:SamplerState.PointClamp);
-            _spriteBatch.Draw(Content.Load<Texture2D>("crafting_table_front"), button.position, null, button.color, 0f, Vector2.One,button.scale, SpriteEffects.None, 1f);
-            _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), button.text, button.position, Microsoft.Xna.Framework.Color.White,0f,Vector2.Zero,new Vector2(1,1),SpriteEffects.None,1f);
+            _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
+            _spriteBatch.Draw(Content.Load<Texture2D>("crafting_table_front"), button.position, null, button.color, 0f, Vector2.One, button.scale, SpriteEffects.None, 1f);
+            _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), button.text, button.position, Microsoft.Xna.Framework.Color.White, 0f, Vector2.Zero, new Vector2(1, 1), SpriteEffects.None, 1f);
             _spriteBatch.End();
+        }
+
+        for(int i = 0;i < 9;i++)
+        {
+            var button = inventory[i];
+            _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
+            _spriteBatch.Draw(Content.Load<Texture2D>("crafting_table_front"), button.position, null, button.color, 0f, Vector2.One, button.scale, SpriteEffects.None, 1f);
+            _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), button.text, button.position, Microsoft.Xna.Framework.Color.White, 0f, Vector2.Zero, new Vector2(1, 1), SpriteEffects.None, 1f);
+            _spriteBatch.End();
+            
         }
 
 

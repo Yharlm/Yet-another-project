@@ -20,7 +20,7 @@ namespace Project3
 
     class Velocity
     {
-        public Vector2 current_velocity = new Vector2(0,1f);
+        public Vector2 current_velocity = new Vector2(0f,0f);
         public float Drag = 0.1f;
         
 
@@ -32,14 +32,14 @@ namespace Project3
     class Entity
     {
         public Collision_box collision = new Collision_box();
-        public Velocity Velocity;
+        public Velocity Velocity = new Velocity();
         public Vector2 Position;
         public float rotation;
         public float health;
         public int ID;
         public Texture2D Texture;
         public float scale;
-        public string name;
+        public string name = "Name";
         public static List<Entity> Load_Mobs()
         {
             List<Entity> list = new List<Entity>();
@@ -90,23 +90,23 @@ namespace Project3
                 //Velocity.current_velocity.Y += 0.2f;
             }
 
-            //else if (Velocity.current_velocity.Y > 0 && !Box.Top)
-            //{
-            //    Position.Y += Velocity.current_velocity.Y* Velocity.Drag;
-            //    //Velocity.current_velocity.Y -= 0.2f;
-            //}
+            else if (Velocity.current_velocity.Y < 0 && !Box.Top)
+            {
+                Position.Y += Velocity.current_velocity.Y * Velocity.Drag;
+                //Velocity.current_velocity.Y -= 0.2f;
+            }
 
-            //if (Velocity.current_velocity.X < 0 && !Box.Right)
-            //{
-            //    Position.X += Velocity.current_velocity.X * Velocity.Drag;
-            //    //Velocity.current_velocity.X += 0.2f;
-            //}
+            if (Velocity.current_velocity.X > 0 && !Box.Right)
+            {
+                Position.X += Velocity.current_velocity.X * Velocity.Drag;
+                //Velocity.current_velocity.X += 0.2f;
+            }
 
-            //else if (Velocity.current_velocity.X > 0 && !Box.Left)
-            //{
-            //    Position.X += Velocity.current_velocity.X * Velocity.Drag;
-            //    //Velocity.current_velocity.X -= 0.2f;
-            //}
+            else if (Velocity.current_velocity.X < 0 && !Box.Left)
+            {
+                Position.X += Velocity.current_velocity.X * Velocity.Drag;
+                //Velocity.current_velocity.X -= 0.2f;
+            }
 
 
 
