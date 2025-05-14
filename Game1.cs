@@ -28,7 +28,7 @@ public class Game1 : Game
     public AnimatedTexture PlayerWalkLeft;
     public List<Button> Button_list = new List<Button>();
     //public crafting_list
-    public Button[] inventory = new Button[9];
+    public Button inventory;
 
 
 
@@ -241,6 +241,13 @@ public class Game1 : Game
         base.Initialize();
         Minecraft minecraft = new Minecraft();
 
+        inventory = new Button();
+        inventory.scale = new Vector2(3,3);
+            inventory.text = "";
+            inventory.position = new Vector2(20, 500);
+
+        
+
 
     }
 
@@ -265,6 +272,8 @@ public class Game1 : Game
         Crafting.position = new Vector2(40, 350);
         Crafting.scale = new Vector2(3, 3);
         Button_list.Add(Crafting);
+
+        
 
 
 
@@ -650,10 +659,16 @@ public class Game1 : Game
 
         for(int i = 0;i < 9;i++)
         {
-            var button = inventory[i];
+            Texture2D texture = Content.Load<Texture2D>("Air");
+            if (player.Inventoy.Count == 1)
+            {
+                texture = player.Inventoy[i].Texture;
+            }
+             
+            var button = inventory;
             _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
-            _spriteBatch.Draw(Content.Load<Texture2D>("crafting_table_front"), button.position, null, button.color, 0f, Vector2.One, button.scale, SpriteEffects.None, 1f);
-            _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), button.text, button.position, Microsoft.Xna.Framework.Color.White, 0f, Vector2.Zero, new Vector2(1, 1), SpriteEffects.None, 1f);
+            _spriteBatch.Draw(texture, button.position + new Vector2(i * 60, 0), null, button.color, 0f, Vector2.One, button.scale, SpriteEffects.None, 1f);
+            _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), button.text, button.position + new Vector2(i*60,0), Microsoft.Xna.Framework.Color.White, 0f, Vector2.Zero, new Vector2(1, 1), SpriteEffects.None, 1f);
             _spriteBatch.End();
             
         }
