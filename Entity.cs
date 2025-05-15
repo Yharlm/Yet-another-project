@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,12 +22,13 @@ namespace Project3
     class Velocity
     {
         public Vector2 current_velocity = new Vector2(0f,0f);
-        public float Drag = 0.1f;
+        public float Drag = 0.05f;
         
 
         public void Add_velocity(Vector2 Force) 
         {
-            current_velocity = Force;
+            //current_velocity = Force;
+            current_velocity +=Force / 10;
         }
     }
     class Entity
@@ -55,6 +57,27 @@ namespace Project3
             list.Add(mob);
             return list;
 
+        }
+        public void Walk2Player(Player plr)
+        {
+            if(plr.position.X + plr.camera.X * plr.Zoom < Position.X)
+            {
+                Velocity.current_velocity+=(new Vector2(-1,0));
+                if (collision.Left && collision.Bootom  )
+                {
+                    Velocity.current_velocity = (new Vector2(0, -2));
+                }
+            }
+            if(plr.position.X + plr.camera.X * plr.Zoom > Position.X)
+            {
+                Velocity.current_velocity+=(new Vector2(1, 0));
+                if (collision.Right && collision.Bootom)
+                {
+                    Velocity.current_velocity = (new Vector2(0, -2));
+                }
+            }
+            
+            
         }
 
         public static bool CheckVertice(Vector2 Offset, Entity Mob,Player plr, float block_gap, float relative_block_size, int[,] grid)

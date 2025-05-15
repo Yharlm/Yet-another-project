@@ -305,10 +305,10 @@ public class Game1 : Game
 
         foreach (Entity mob in minecraft.Existing_entities)
         {
-            //mob.collision.Left = false;
-            //mob.collision.Right = false;
-            //mob.collision.Top = false;
-            //mob.collision.Bootom = false;
+            mob.collision.Left = false;
+            mob.collision.Right = false;
+            mob.collision.Top = false;
+            mob.collision.Bootom = false;
 
             if (!Entity.CheckVertice(new System.Numerics.Vector2(0, 0.5f), mob, player, block_gap, relative_block_size, grid))
             {
@@ -325,6 +325,7 @@ public class Game1 : Game
             if (!Entity.CheckVertice(new System.Numerics.Vector2(0.5f, 1f), mob, player, block_gap, relative_block_size, grid))
             {
                 mob.collision.Bootom = true;
+
             }
 
             //Entity.TestCheckVertice(new System.Numerics.Vector2(0, 0.5f), mob, player, block_gap, relative_block_size, grid);
@@ -332,8 +333,12 @@ public class Game1 : Game
             {
                 mob.Apply_Velocity();
                 //mob.Position += mob.Velocity.current_velocity;
-                //mob.Position.Y += 0.01f;
+                //mob.Position.Y += 0.1f;
+                mob.Velocity.Add_velocity(new Vector2(0, 0.3f));
+
             }
+            mob.Walk2Player(player);
+
 
 
 
@@ -660,10 +665,11 @@ public class Game1 : Game
         for(int i = 0;i < 9;i++)
         {
             Texture2D texture = Content.Load<Texture2D>("Air");
-            if (player.Inventoy.Count == 1)
+            if (player.Inventoy.Count > 0)
             {
-                texture = player.Inventoy[i].Texture;
+
             }
+            
              
             var button = inventory;
             _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
