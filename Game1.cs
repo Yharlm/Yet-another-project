@@ -327,18 +327,33 @@ public class Game1 : Game
                 mob.collision.Bootom = true;
 
             }
-
+            Vector2 PlrPos = player.position + player.camera * player.Zoom;
             //Entity.TestCheckVertice(new System.Numerics.Vector2(0, 0.5f), mob, player, block_gap, relative_block_size, grid);
             if (mob != null)
             {
                 mob.Apply_Velocity();
                 //mob.Position += mob.Velocity.current_velocity;
                 //mob.Position.Y += 0.1f;
-                mob.Velocity.Add_velocity(new Vector2(0, 0.3f));
+                mob.Velocity.current_velocity.Y += 0.3f;
+                if(mob.collision.Bootom)
+                {
+                    mob.Velocity.current_velocity.Y = 0;
+                }
+                
 
             }
-            mob.Walk2Player(player);
+            mob.Walk2Player();
 
+            if (mob.Position.X + 3 < player.position.X || mob.Position.X - 3 > player.position.X)
+            {
+                mob.behaviour.Failed_attempts = 0;
+                mob.color = Color.Green;
+                mob.behaviour.LookForPlayer = true;
+            }
+            if (mob.behaviour.LookForPlayer)
+            {
+                mob.behaviour.TargetPos = PlrPos;
+            }
 
 
 
@@ -443,7 +458,11 @@ public class Game1 : Game
         {
             plr.Zoom -= 0.01f;
         }
-
+        if (Keyboard.GetState().IsKeyDown(Keys.O))
+        {
+            //minecraft.Fill_block((int)Cursor_toWorld.X, (int)Cursor_toWorld.Y, minecraft.Block_list[4]); // Debugging
+            minecraft.Existing_entities.ForEach(entity => { entity.behaviour.TargetPos = Cursor_toWorld; });
+        }
 
 
 
@@ -612,7 +631,7 @@ public class Game1 : Game
 
         foreach (Entity mob in minecraft.Existing_entities)
         {
-            _spriteBatch.Draw(Content.Load<Texture2D>("dirt"), new Vector2(mob.Position.X * block_gap + -player.camera.X * block_gap * relative_block_size, mob.Position.Y * block_gap + -player.camera.Y * block_gap * relative_block_size), null, Color.LawnGreen, 0f, Vector2.Zero, relative_block_size, SpriteEffects.None, 0f);
+            _spriteBatch.Draw(Content.Load<Texture2D>("dirt"), new Vector2(mob.Position.X * block_gap + -player.camera.X * block_gap * relative_block_size, mob.Position.Y * block_gap + -player.camera.Y * block_gap * relative_block_size), null, mob.color, 0f, Vector2.Zero, relative_block_size, SpriteEffects.None, 0f);
             _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), mob.collision.Bootom.ToString(), new Vector2(mob.Position.X * block_gap + -player.camera.X * block_gap * relative_block_size, mob.Position.Y * block_gap + -player.camera.Y * block_gap * relative_block_size), Color.Wheat);
 
         }

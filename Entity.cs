@@ -1,14 +1,22 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection.Metadata;
+using Color = Microsoft.Xna.Framework.Color;
 
 namespace Project3
 {
+    class Behaviour
+    {
+        public Vector2 TargetPos = Vector2.Zero;
+        public int Failed_attempts = 0;
+        public bool Retreat = false;
+        public bool ChargeAtPlr = false;
+        public bool LookForPlayer = false;
+        public bool LowHP = false;
+        public bool StopPLmidAir = false;
+    }
 
     class Collision_box
     {
@@ -21,18 +29,24 @@ namespace Project3
 
     class Velocity
     {
-        public Vector2 current_velocity = new Vector2(0f,0f);
+        public Vector2 current_velocity = new Vector2(0f, 0f);
         public float Drag = 0.05f;
-        
 
-        public void Add_velocity(Vector2 Force) 
+
+        public void Add_velocity(Vector2 Force)
         {
             //current_velocity = Force;
-            current_velocity +=Force / 10;
+            current_velocity += Force / 10;
         }
     }
     class Entity
     {
+
+        public Color color = Color.Green;
+        public Behaviour behaviour = new Behaviour();
+
+        public float MaxJumpPower = 2;
+        public float walkspeed = 1;
         public Collision_box collision = new Collision_box();
         public Velocity Velocity = new Velocity();
         public Vector2 Position;
@@ -47,9 +61,9 @@ namespace Project3
             List<Entity> list = new List<Entity>();
             Entity mob = new Entity();
             mob.Velocity = new Velocity();
-            
+
             mob.name = "Dirt";
-            
+
             mob.ID = 1;
             mob.scale = 6;
             mob.rotation = 0;
@@ -58,35 +72,53 @@ namespace Project3
             return list;
 
         }
-        public void Walk2Player(Player plr)
+        public void Walk2Player()
         {
-            if(plr.position.X + plr.camera.X * plr.Zoom < Position.X)
+
+            //Walking and jumping
+            if (collision.Bootom && collision.Left || collision.Right)
             {
-                Velocity.current_velocity+=(new Vector2(-1,0));
-                if (collision.Left && collision.Bootom  )
+                Velocity.current_velocity.Y = -MaxJumpPower * 3;
+
+            }
+            if (behaviour.TargetPos.X < Position.X)
+            {
+                Velocity.current_velocity.X = -walkspeed;
+
+
+            }
+            else
+            {
+                Velocity.current_velocity.X = walkspeed;
+
+            }
+            //if the player is unreachable for a long time gives up
+            if (behaviour.Failed_attempts > 130)
+            {
+                color = Color.Red;
+                Velocity.current_velocity.X = -Velocity.current_velocity.X;
+                behaviour.LookForPlayer = false;
+            }
+            if (behaviour.TargetPos.X < Position.X + 8 && behaviour.TargetPos.X > Position.X - 8)
+            {
+                
+                if (collision.Left || collision.Right)
                 {
-                    Velocity.current_velocity = (new Vector2(0, -2));
+                    behaviour.Failed_attempts += 1;
                 }
             }
-            if(plr.position.X + plr.camera.X * plr.Zoom > Position.X)
-            {
-                Velocity.current_velocity+=(new Vector2(1, 0));
-                if (collision.Right && collision.Bootom)
-                {
-                    Velocity.current_velocity = (new Vector2(0, -2));
-                }
-            }
-            
-            
+
+
+
         }
 
-        public static bool CheckVertice(Vector2 Offset, Entity Mob,Player plr, float block_gap, float relative_block_size, int[,] grid)
+        public static bool CheckVertice(Vector2 Offset, Entity Mob, Player plr, float block_gap, float relative_block_size, int[,] grid)
         {
             Vector2 mousepos = (Mob.Position + Offset);
             double x = Math.Ceiling((double)mousepos.X / block_gap * relative_block_size);
             double y = Math.Ceiling((double)mousepos.Y / block_gap * relative_block_size);
 
-            if(mousepos.X <= 0 || mousepos.Y <= 0)
+            if (mousepos.X <= 0 || mousepos.Y <= 0)
             {
                 return false;
             }
@@ -100,16 +132,16 @@ namespace Project3
             double x = Math.Ceiling((double)mousepos.X / block_gap * relative_block_size);
             double y = Math.Ceiling((double)mousepos.Y / block_gap * relative_block_size);
 
-            grid[(int)mousepos.Y , (int)mousepos.X] = 2;
+            grid[(int)mousepos.Y, (int)mousepos.X] = 2;
         }
-        
+
         public void Apply_Velocity()
         {
             var Box = collision;
-            
+
             if (Velocity.current_velocity.Y > 0 && !Box.Bootom)
             {
-                Position.Y += Velocity.current_velocity.Y* Velocity.Drag;
+                Position.Y += Velocity.current_velocity.Y * Velocity.Drag;
                 //Velocity.current_velocity.Y += 0.2f;
             }
 

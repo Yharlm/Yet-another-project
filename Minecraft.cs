@@ -23,7 +23,7 @@ namespace Project3
             mob.health = 0;
             mob.Position = pos;
             mob.name = entity.name;
-            
+            mob.color = entity.color;   
             mob.Velocity = new Velocity();
             Existing_entities.Add(mob);
             Existing_entities.Last().Position = pos;
