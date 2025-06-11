@@ -1,14 +1,17 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Reflection.Metadata;
 using Color = Microsoft.Xna.Framework.Color;
+using Vector2 = System.Numerics.Vector2;
 
 namespace Project3
 {
     class Behaviour
     {
+        public string Mode = "Idle";
         public Vector2 TargetPos = Vector2.Zero;
         public int Failed_attempts = 0;
         public bool Retreat = false;
@@ -74,7 +77,7 @@ namespace Project3
         }
         public void Walk2Player()
         {
-
+            Random random   = new Random();
             //Walking and jumping
             if (collision.Bootom && collision.Left || collision.Right)
             {
@@ -93,20 +96,29 @@ namespace Project3
 
             }
             //if the player is unreachable for a long time gives up
-            if (behaviour.Failed_attempts > 130)
+            if (behaviour.Mode == "Idle")
             {
-                color = Color.Red;
-                Velocity.current_velocity.X = -Velocity.current_velocity.X;
-                behaviour.LookForPlayer = false;
-            }
-            if (behaviour.TargetPos.X < Position.X + 8 && behaviour.TargetPos.X > Position.X - 8)
-            {
+                int direction = random.Next(-1, 2);
                 
-                if (collision.Left || collision.Right)
-                {
-                    behaviour.Failed_attempts += 1;
-                }
+                
+                    behaviour.TargetPos.X = Position.X + direction * 10;
+                
             }
+            //if (behaviour.Failed_attempts > 130)
+            //{
+            //    color = Color.Red;
+            //    Velocity.current_velocity.X = -Velocity.current_velocity.X;
+            //    behaviour.TargetPos = Vector2.One;
+            //    behaviour.Failed_attempts = 0;
+            //}
+            //if (behaviour.TargetPos.X > Position.X - 8 || behaviour.TargetPos.X < Position.X + 8)
+            //{
+
+            //    if (collision.Left || collision.Right)
+            //    {
+            //        behaviour.Failed_attempts += 1;
+            //    }
+            //}
 
 
 

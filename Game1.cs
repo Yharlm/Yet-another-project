@@ -310,7 +310,7 @@ public class Game1 : Game
             mob.collision.Top = false;
             mob.collision.Bootom = false;
 
-            if (!Entity.CheckVertice(new System.Numerics.Vector2(0, 0.5f), mob, player, block_gap, relative_block_size, grid))
+            if (!Entity.CheckVertice(new Vector2(0, 0.5f), mob, player, block_gap, relative_block_size, grid))
             {
                 mob.collision.Left = true;
             }
@@ -344,17 +344,15 @@ public class Game1 : Game
             }
             mob.Walk2Player();
 
-            if (mob.Position.X + 3 < player.position.X || mob.Position.X - 3 > player.position.X)
-            {
-                mob.behaviour.Failed_attempts = 0;
-                mob.color = Color.Green;
-                mob.behaviour.LookForPlayer = true;
-            }
-            if (mob.behaviour.LookForPlayer)
-            {
-                mob.behaviour.TargetPos = PlrPos;
-            }
+            //if (mob.Position.X - 5 < PlrPos.X && mob.Position.X + 5 > PlrPos.X)
+            //{
 
+            //    mob.color = Color.Green;
+
+            //    mob.behaviour.TargetPos = PlrPos;
+            //}
+
+            mob.behaviour.Mode = "Idle";
 
 
         }
