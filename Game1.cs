@@ -28,7 +28,7 @@ public class Game1 : Game
     public AnimatedTexture PlayerWalkLeft;
     public List<Button> Button_list = new List<Button>();
     //public crafting_list
-    public Button inventory;
+    
 
 
 
@@ -416,7 +416,6 @@ public class Game1 : Game
                 if (Mouse.GetState().LeftButton == ButtonState.Pressed)
                 {
 
-
                 }
                 continue;
             }
@@ -658,11 +657,12 @@ public class Game1 : Game
         player.player_texture.DrawFrame(_spriteBatch, NewPos * new Vector2(block_gap, block_gap));
 
         int count = 0;
-
+        Vector2 InventoryPos = new Vector2(324, 80);
         foreach (var b in player.Inventoy)
         {
-            _spriteBatch.Draw(b.Texture, new Vector2(30 * count, 40), null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
-            _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), b.quantity.ToString(), new Vector2(30 * count, 60), Color.Wheat);
+            _spriteBatch.Draw(b.Texture, new Vector2(30 * count, 40)+ InventoryPos, null, Color.White, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0f);
+            _spriteBatch.Draw(Content.Load<Texture2D>("HotBarTexture"), new Vector2(30 * count, 40)+ InventoryPos, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+            _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), b.quantity.ToString(), new Vector2(30 * count, 60)+ InventoryPos, Color.Wheat);
 
 
 
