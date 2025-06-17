@@ -53,7 +53,7 @@ namespace Project3
         public bool has_jumped = false;
         
         
-        public List<Block> Inventoy = new List<Block> ();
+        public Block[,] Inventoy =new Block[4,9];
         public int index = 1;
     }
 }

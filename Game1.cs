@@ -28,7 +28,7 @@ public class Game1 : Game
     public AnimatedTexture PlayerWalkLeft;
     public List<Button> Button_list = new List<Button>();
     //public crafting_list
-    
+
 
 
 
@@ -53,12 +53,7 @@ public class Game1 : Game
 
 
 
-        Button Spawn = new Button()
-        {
-            text = "Press me",
-            font = Content.Load<SpriteFont>("text1"),
-
-        };
+        
 
 
 
@@ -241,12 +236,35 @@ public class Game1 : Game
         base.Initialize();
         Minecraft minecraft = new Minecraft();
 
-        inventory = new Button();
-        inventory.scale = new Vector2(3,3);
-            inventory.text = "";
-            inventory.position = new Vector2(20, 500);
+        for (int i = 0; i < 9; i++)
+        {
+            Button_list.Add(new Button()
+            {
+                name = "I" + i,
+                position = new Vector2(30 * i*3.1f, 0) + new Vector2(50,40),
+                scale = new Vector2(5, 5),
+                Type = "Hotbar",
+                text = " " + (1+i).ToString(),
+                color = Color.White,
+                background = Content.Load<Texture2D>("HotBarTexture"),
+            });
 
-        
+
+        }
+        for (int i = 0; i < player.Inventoy.GetLength(0); i++)
+        {
+            for (int j = 0; j < player.Inventoy.GetLength(1); j++)
+            {
+                if (player.Inventoy[i,j] == null)
+                {
+                    player.Inventoy[i, j] = Block_list[0];
+                    
+                }
+
+            }
+        }
+
+
 
 
     }
@@ -271,7 +289,7 @@ public class Game1 : Game
         Crafting.text = "";
         Crafting.position = new Vector2(40, 350);
         Crafting.scale = new Vector2(3, 3);
-        Button_list.Add(Crafting);
+        //Button_list.Add(Crafting);
 
         
 
@@ -410,12 +428,15 @@ public class Game1 : Game
         System.Numerics.Vector2 Cursor_toWorld = new System.Numerics.Vector2((float)(double)mousepos.X / block_gap + plr.camera.X * relative_block_size, (float)(double)mousepos.Y / block_gap + plr.camera.Y * relative_block_size);
         foreach (Button button in Button_list)
         {
-            if (mousepos.X > button.position.X && mousepos.X < button.position.X + button.scale.X * 10 && mousepos.Y > button.position.Y && mousepos.Y < button.position.Y + button.scale.Y * 10)
+            if (mousepos.X > button.position.X && mousepos.X < button.position.X + button.scale.X * 16 && mousepos.Y > button.position.Y && mousepos.Y < button.position.Y + button.scale.Y * 16)
             {
                 button.color = Color.Gold;
                 if (Mouse.GetState().LeftButton == ButtonState.Pressed)
                 {
-
+                    if (button.Type == "Hotbar")
+                    {
+                        index_value = int.Parse(button.text);
+                    }
                 }
                 continue;
             }
@@ -593,7 +614,7 @@ public class Game1 : Game
                 if (Block_list.Find(x => x.id == grid[i, j]) == null)
                 {
                     _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
-                    _spriteBatch.Draw(Block_list[1].Texture, new Vector2(j * block_gap + -player.camera.X * block_gap * relative_block_size, i * block_gap + -player.camera.Y * block_gap * relative_block_size), null, Color.White, 0f, Vector2.Zero, relative_block_size, SpriteEffects.None, 0f);
+                    _spriteBatch.Draw(Block_list[1].Texture, new Vector2(j * block_gap + -player.camera.X * block_gap * relative_block_size, i * block_gap + -player.camera.Y * block_gap * relative_block_size), null, Color.DarkRed, 0f, Vector2.Zero, relative_block_size, SpriteEffects.None, 0f);
                     _spriteBatch.End();
                     continue;
                 }
@@ -656,45 +677,47 @@ public class Game1 : Game
         // Replacing the normal SpriteBatch.Draw call to use the version from the "AnimatedTexture" class instead
         player.player_texture.DrawFrame(_spriteBatch, NewPos * new Vector2(block_gap, block_gap));
 
-        int count = 0;
+      
         Vector2 InventoryPos = new Vector2(324, 80);
-        foreach (var b in player.Inventoy)
+        for (int i = 0; i < 4; i++)
         {
-            _spriteBatch.Draw(b.Texture, new Vector2(30 * count, 40)+ InventoryPos, null, Color.White, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0f);
-            _spriteBatch.Draw(Content.Load<Texture2D>("HotBarTexture"), new Vector2(30 * count, 40)+ InventoryPos, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
-            _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), b.quantity.ToString(), new Vector2(30 * count, 60)+ InventoryPos, Color.Wheat);
+            for (int j = 0; j < 9; j++)
+            {
+                var b = player.Inventoy[i, j];
+                _spriteBatch.Draw(b.Texture, new Vector2(30 * j, 40 * i) + InventoryPos, null, Color.White, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0f);
+                _spriteBatch.Draw(Content.Load<Texture2D>("HotBarTexture"), new Vector2(30 * j, 40 * i) + InventoryPos, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+                _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), b.quantity.ToString(), new Vector2(30 * j, 60 * i) + InventoryPos, Color.Wheat);
 
 
+            }
 
-
-            count++;
 
         }
+
+        
+
+        
         _spriteBatch.End();
         foreach (var button in Button_list)
         {
             _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
-            _spriteBatch.Draw(Content.Load<Texture2D>("crafting_table_front"), button.position, null, button.color, 0f, Vector2.One, button.scale, SpriteEffects.None, 1f);
-            _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), button.text, button.position, Microsoft.Xna.Framework.Color.White, 0f, Vector2.Zero, new Vector2(1, 1), SpriteEffects.None, 1f);
-            _spriteBatch.End();
-        }
 
-        for(int i = 0;i < 9;i++)
-        {
-            Texture2D texture = Content.Load<Texture2D>("Air");
-            if (player.Inventoy.Count > 0)
+            if (button.Type == "Hotbar")
             {
+                var block = player.Inventoy[0, int.Parse(button.name[1].ToString())];
+                _spriteBatch.Draw(block.Texture, button.position, null, button.color, 0f, Vector2.One, button.scale, SpriteEffects.None, 1f);
+                _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), block.quantity.ToString(), button.position + new Vector2(3, 50), Microsoft.Xna.Framework.Color.White, 0f, Vector2.Zero, new Vector2(1, 1), SpriteEffects.None, 1f);
 
             }
+            _spriteBatch.Draw(button.background, button.position, null, button.color, 0f, Vector2.One, button.scale, SpriteEffects.None, 1f);
+            _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), button.text, button.position, Microsoft.Xna.Framework.Color.White, 0f, Vector2.Zero, new Vector2(1, 1), SpriteEffects.None, 1f);
             
-             
-            var button = inventory;
-            _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
-            _spriteBatch.Draw(texture, button.position + new Vector2(i * 60, 0), null, button.color, 0f, Vector2.One, button.scale, SpriteEffects.None, 1f);
-            _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), button.text, button.position + new Vector2(i*60,0), Microsoft.Xna.Framework.Color.White, 0f, Vector2.Zero, new Vector2(1, 1), SpriteEffects.None, 1f);
+
+            
             _spriteBatch.End();
-            
         }
+
+        
 
 
         base.Draw(gameTime);

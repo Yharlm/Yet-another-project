@@ -14,6 +14,7 @@ namespace Project3
 {
     public class Button
     {
+        public string Type;
         public string name;
         public Vector2 position = new Vector2(300,44);
         public string text = "Button1";
@@ -23,6 +24,7 @@ namespace Project3
         public SpriteFont font;
         public Texture2D background;
 
+        public List<Texture2D> Textures = new List<Texture2D>();
         public void reset()
         {
             pressed = false;

@@ -138,57 +138,110 @@ namespace Project3
         {
 
             var block = Get_ByID(grid[y, x]);
-            player.Breaking_stage -= 1 / (0.5f * block.stength );
+            if (block == null)
+            {
+                return;
+
+            }
+            player.Breaking_stage -= 1 / (0.5f * block.stength);
             if (player.Breaking_stage > 0)
             {
 
-                
-                
-                
             }
             else
             {
                 
                 player.Breaking_stage = 10;
-                if (block == null || block.id == 0)
+                
+                if (Contains(player.Inventoy,block) )             
                 {
-
-                }
-                else if (player.Inventoy.Contains(block))
-                {
-                    player.Inventoy.Find(x => x.id == block.id).quantity += 1;
+                    AddAmmountItem(player.Inventoy, block);
                 }
                 else
                 {
                     block.quantity = 1;
-                    player.Inventoy.Add(block);
+                    AddItem(player.Inventoy,block);
                 }
                 grid[y, x] = 0;
             }
 
         }
-        public void Place_block(int x, int y, Player player)
+
+        public static bool Contains(Block[,] list, Block item)
         {
-            if(player.Inventoy.Count == 0)
+            
+            foreach (var block in list)
+            {
+                if (block.id == item.id)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public static void AddAmmountItem(Block[,] list, Block item)
+        {
+            if (item.id == 0)
             {
                 return;
             }
-            var block = Block_list.Find(x => x.id == player.Inventoy[player.index-1].id);
+            for (int i = 0; i < list.GetLength(0); i++)
+            {
+                for (int j = 0; j < list.GetLength(1); j++)
+                {
+                    if (list[i, j].id == item.id)
+                    {
+                        list[i, j].quantity += 1;
+                    }
+                }
+            }
+
+        }
+
+        public static void AddItem(Block[,] list, Block item)
+        {
+
+            for (int i = 0; i < list.GetLength(0); i++)
+            {
+                for(int j = 0;j < list.GetLength(1);j++)
+                {
+                    if (list[i, j].id == 0)
+                    {
+                        list[i, j] = item;
+                        return;
+                    }
+                    
+                }
+            }
+
+        }
+        public void Place_block(int x, int y, Player player)
+        {
+            
+            var block = Block_list.Find(x => x.id == player.Inventoy[0,player.index-1].id);
             if(block == null)
             {
                 return;
             }
-            if(player.Inventoy.Contains(block) && player.Inventoy.Find(x => x.id == block.id).quantity > 0)
+            if (player.Inventoy[0,player.index-1].id != 0 && player.Inventoy[0, player.index - 1].quantity > 0)
             {
                 if(grid[y, x] != 0)
                 {
                     return;
                 }
                 grid[y, x] = block.id;
-                player.Inventoy.Find(x => x.id == block.id).quantity -= 1;
-                if(player.Inventoy.Find(x => x.id == block.id).quantity <= 0)
+                player.Inventoy[0, player.index - 1].quantity -= 1;
+                for (int i = 0; i < player.Inventoy.GetLength(0); i++)
                 {
-                    player.Inventoy.Remove(block);
+                    for (int j = 0; j < player.Inventoy.GetLength(1); j++)
+                    {
+                        if (player.Inventoy[i, j].quantity < 0)
+                        {
+                            player.Inventoy[i, j] = Block_list[0];
+
+                        }
+
+                    }
                 }
             }
         }
