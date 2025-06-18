@@ -53,7 +53,7 @@ public class Game1 : Game
 
 
 
-        
+
 
 
 
@@ -241,10 +241,10 @@ public class Game1 : Game
             Button_list.Add(new Button()
             {
                 name = "I" + i,
-                position = new Vector2(30 * i*3.1f, 0) + new Vector2(50,40),
+                position = new Vector2(30 * i * 3.1f, 0) + new Vector2(50, 40),
                 scale = new Vector2(5, 5),
                 Type = "Hotbar",
-                text = " " + (1+i).ToString(),
+                text = " " + (1 + i).ToString(),
                 color = Color.White,
                 background = Content.Load<Texture2D>("HotBarTexture"),
             });
@@ -255,15 +255,16 @@ public class Game1 : Game
         {
             for (int j = 0; j < player.Inventoy.GetLength(1); j++)
             {
-                if (player.Inventoy[i,j] == null)
+                if (player.Inventoy[i, j] == null)
                 {
                     player.Inventoy[i, j] = Block_list[0];
-                    
+
                 }
 
             }
         }
 
+        
 
 
 
@@ -291,7 +292,7 @@ public class Game1 : Game
         Crafting.scale = new Vector2(3, 3);
         //Button_list.Add(Crafting);
 
-        
+
 
 
 
@@ -353,11 +354,11 @@ public class Game1 : Game
                 //mob.Position += mob.Velocity.current_velocity;
                 //mob.Position.Y += 0.1f;
                 mob.Velocity.current_velocity.Y += 0.3f;
-                if(mob.collision.Bootom)
+                if (mob.collision.Bootom)
                 {
                     mob.Velocity.current_velocity.Y = 0;
                 }
-                
+
 
             }
             mob.Walk2Player();
@@ -380,27 +381,69 @@ public class Game1 : Game
 
         if (Keyboard.GetState().IsKeyDown(Keys.D1))
         {
-            index_value -= 0.1f;
-
+            index_value = 1f;
         }
-
-
-
         if (Keyboard.GetState().IsKeyDown(Keys.D2))
         {
-
-            index_value += 0.1f;
+            index_value = 2f;
         }
+        if (Keyboard.GetState().IsKeyDown(Keys.D3))
+        {
+            index_value = 3f;
+        }
+        if (Keyboard.GetState().IsKeyDown(Keys.D4))
+        {
+            index_value = 4f;
+        }
+        if (Keyboard.GetState().IsKeyDown(Keys.D5))
+        {
+            index_value = 5f;
+        }
+        if (Keyboard.GetState().IsKeyDown(Keys.D6))
+        {
+            index_value = 6f;
+        }
+        if (Keyboard.GetState().IsKeyDown(Keys.D7))
+        {
+            index_value = 7f;
+        }
+
+        if (Keyboard.GetState().IsKeyDown(Keys.D8))
+        {
+            index_value = 8f;
+        }
+
+        if (Keyboard.GetState().IsKeyDown(Keys.D9))
+        {
+            index_value = 9f;
+        }
+
+        player.index = (int)index_value + 1;
+        for (int i = 0; i < player.Inventoy.GetLength(0); i++)
+        {
+            for (int j = 0; j < player.Inventoy.GetLength(1); j++)
+            {
+                if (player.Inventoy[i, j].quantity <= 0)
+                {
+                    player.Inventoy[i, j] = Block_list[0];
+
+                }
+
+            }
+        }
+
+
+
 
         player.index = (int)index_value;
-        if (player.index <= 1)
-        {
-            player.index = 9;
-        }
-        if (player.index >= 9)
-        {
-            player.index = 1;
-        }
+        //if (player.index <= 1)
+        //{
+        //    player.index = 9;
+        //}
+        //if (player.index > 9)
+        //{
+        //    player.index = 1;
+        //}
         base.Update(gameTime);
     }
 
@@ -677,7 +720,7 @@ public class Game1 : Game
         // Replacing the normal SpriteBatch.Draw call to use the version from the "AnimatedTexture" class instead
         player.player_texture.DrawFrame(_spriteBatch, NewPos * new Vector2(block_gap, block_gap));
 
-      
+
         Vector2 InventoryPos = new Vector2(324, 80);
         for (int i = 0; i < 4; i++)
         {
@@ -694,9 +737,9 @@ public class Game1 : Game
 
         }
 
-        
 
-        
+
+
         _spriteBatch.End();
         foreach (var button in Button_list)
         {
@@ -704,20 +747,30 @@ public class Game1 : Game
 
             if (button.Type == "Hotbar")
             {
+
+                Color Selected = Color.White;
+                if (player.index == int.Parse(button.name[1].ToString()) + 1)
+                {
+                    Selected = Color.Gold;
+                }
                 var block = player.Inventoy[0, int.Parse(button.name[1].ToString())];
                 _spriteBatch.Draw(block.Texture, button.position, null, button.color, 0f, Vector2.One, button.scale, SpriteEffects.None, 1f);
-                _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), block.quantity.ToString(), button.position + new Vector2(3, 50), Microsoft.Xna.Framework.Color.White, 0f, Vector2.Zero, new Vector2(1, 1), SpriteEffects.None, 1f);
+
+
+
+
+                _spriteBatch.Draw(button.background, button.position, null, Selected, 0f, Vector2.One, button.scale, SpriteEffects.None, 1f);
+                _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), button.text, button.position, Microsoft.Xna.Framework.Color.White, 0f, Vector2.Zero, new Vector2(1, 1), SpriteEffects.None, 1f);
+
+
+                _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), block.quantity.ToString(), button.position + new Vector2(2, 54), Microsoft.Xna.Framework.Color.White, 0f, Vector2.Zero, new Vector2(1, 1), SpriteEffects.None, 1f);
 
             }
-            _spriteBatch.Draw(button.background, button.position, null, button.color, 0f, Vector2.One, button.scale, SpriteEffects.None, 1f);
-            _spriteBatch.DrawString(Content.Load<SpriteFont>("text1"), button.text, button.position, Microsoft.Xna.Framework.Color.White, 0f, Vector2.Zero, new Vector2(1, 1), SpriteEffects.None, 1f);
-            
 
-            
             _spriteBatch.End();
         }
 
-        
+
 
 
         base.Draw(gameTime);
